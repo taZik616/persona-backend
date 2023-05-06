@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from api.models import Brand, HelpfulInfo, AnotherImage, User, Category, MainContent
+
+admin.site.register(User)
+admin.site.register(Brand)
+admin.site.register(HelpfulInfo)
+admin.site.register(AnotherImage)
+admin.site.register(Category)
+admin.site.register(MainContent)

@@ -29,9 +29,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     firstName = models.CharField(max_length=50, blank=True)
     lastName = models.CharField(max_length=50, blank=True)
     email = models.EmailField(max_length=200, blank=True)
-    birthday = models.CharField(max_length=120, default='')
-    favorites = models.TextField(default='', max_length=9000)
-
+    birthday = models.CharField(max_length=120, default='', blank=True)
+    favorites = models.TextField(default='', max_length=9000, blank=True)
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'phoneNumber'
@@ -39,8 +38,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     class Meta:
-        verbose_name = 'user'
-        verbose_name_plural = 'users'
+        verbose_name = 'Аккаунт'
+        verbose_name_plural = 'Аккаунты'
 
     def __str__(self):
-        return f"{self.phoneNumber}, fullName: {self.firstName} {self.lastName}"
+        if self.firstName or self.lastName:
+            return f"{self.phoneNumber}, fullName: {self.firstName} {self.lastName}"
+        else:
+            return self.phoneNumber
