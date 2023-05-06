@@ -1,0 +1,6 @@
+/myenv
+__pycache__
+environment.py
+db.sqlite3
+poetry.lock
+migrations
