@@ -3,9 +3,9 @@ from api.constants import GENDERS
 
 
 class Brand(models.Model):
-    name = models.CharField(default='', max_length=50, blank=False, null=False)
+    name = models.CharField(max_length=50, blank=False, null=False)
     brandId = models.CharField(
-        default='', max_length=20, blank=False, null=False)
+        default='', max_length=20, blank=False, null=False, primary_key=True)
     logoUrl = models.CharField(
         default='', max_length=500, blank=False, null=False)
     keywords = models.TextField(default='', max_length=20000, blank=True)
