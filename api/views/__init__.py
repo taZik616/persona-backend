@@ -1,2 +1,3 @@
 from .brands import BrandsView
-from .receive_auth_token import ReceiveAuthToken
+from .login import LoginView
+from .registry_send_code import RegistrySendCodeView

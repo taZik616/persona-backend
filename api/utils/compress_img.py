@@ -7,7 +7,7 @@ class OpenImageError(Exception):
         super().__init__(message)
 
 
-def compress_img(image_name, new_size_ratio=0.9, quality=80, width=None, height=None, to_jpg=True):
+def compressImg(image_name, new_size_ratio=0.9, quality=80, width=None, height=None, to_jpg=True):
     try:
         img = Image.open(image_name)
     except:

@@ -11,5 +11,6 @@ router = routers.SimpleRouter()
 urlpatterns = [
     path('', include(router.urls)),
     path('brands', views.BrandsView.as_view()),
-    path('token', views.ReceiveAuthToken.as_view()),
+    path('login', views.LoginView),
+    path('registry-send-code', views.RegistrySendCodeView),
 ]

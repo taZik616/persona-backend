@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from environment import DJANGO_SECRET_KEY, MYSQL_DB_PASSWORD, MYSQL_DB_USER
+from environment import DJANGO_SECRET_KEY, MEMCACHED_LOCATION, MYSQL_DB_PASSWORD, MYSQL_DB_USER
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,6 +34,13 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+        'LOCATION': MEMCACHED_LOCATION,
+    }
 }
 
 MIDDLEWARE = [
