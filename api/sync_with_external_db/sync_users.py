@@ -43,6 +43,6 @@ def synсUsers(request):
 
                 User.objects.update_or_create(**userData)
 
-        return Response({'success': 'Соединение установлено'})
+        return Response({'success': 'Синхронизация прошла успешно'})
     except:
         return Response({'error': 'Ошибка синхронизации'})
