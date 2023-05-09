@@ -1,29 +1,51 @@
+from typing import Any, MutableMapping, Optional, Tuple
 from django.db import models
-import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, phoneNumber, password=None, **extra_fields):
+    def create_user(self, password=None, md5password=None, **extra_fields):
+        phoneNumber = extra_fields.get('phoneNumber')
+
+        if not password and not md5password:
+            raise ValueError('The password field must be set')
         if not phoneNumber:
             raise ValueError('The Email field must be set')
-        phoneNumber = phoneNumber
-        user = self.model(phoneNumber=phoneNumber, **extra_fields)
-        user.set_password(password)
+        user = self.model(**extra_fields)
+
+        if md5password:
+            user.password = md5password
+        else:
+            user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, phoneNumber, password=None, **extra_fields):
+    def update_or_create(self, **kwargs: Any):
+        userId = kwargs.get('userId')
+        try:
+            user = self.get(userId=userId)
+            if user:
+                return self.update(**kwargs)
+            else:
+                raise Exception('user not found')
+        except:
+            return self.create_user(**kwargs)
+
+    def update(self, md5password=None, **kwargs: Any) -> int:
+        if md5password:
+            return super().update(**kwargs, password=md5password)
+        else:
+            return super().update(**kwargs)
+
+    def create_superuser(self, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(phoneNumber, password, **extra_fields)
+        return self.create_user(**extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    userId = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False)
+    userId = models.AutoField(primary_key=True, unique=True)
     language = models.CharField(default='Russian', max_length=15)
-    md5password = models.CharField(max_length=200, default='')
     phoneNumber = models.CharField(max_length=15, default='', unique=True)
     firstName = models.CharField(max_length=50, blank=True)
     lastName = models.CharField(max_length=50, blank=True)
@@ -33,6 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     isPhoneNumberVerified = models.BooleanField(default=False, blank=True)
 
     is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'phoneNumber'
 
@@ -44,6 +67,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         if self.firstName or self.lastName:
-            return f"{self.phoneNumber}, fullName: {self.firstName} {self.lastName}"
+            return f"{self.phoneNumber}, {self.firstName} {self.lastName}"
         else:
             return self.phoneNumber

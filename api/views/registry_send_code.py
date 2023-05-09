@@ -36,61 +36,70 @@ def RegistrySendCodeView(request):
     firstName = request.data.get('firstName', '')
     lastName = request.data.get('lastName', '')
 
-    # connection = connectToPersonaDB()
-    # with connection.cursor() as cursor:
-    try:
-        isUserAlreadyExist = User.objects.filter(
-            phoneNumber=formattedPhoneNumber).count() >= 1
-        if isUserAlreadyExist:
-            return Response({'error': 'Аккаунт с данным номером уже был создан'}, status=400)
-
-        registryLimiter.increment(addressIP)
-        smsResponse = requests.post(
-            f'https://sms.ru/code/call?phone={formattedPhoneNumber}&ip=-1&api_id={SMS_RU_API_KEY}'
-        )
-
-        if smsResponse.status_code != 200:
-            return Response({"error": SEND_VERIFY_ERROR}, status=400)
-
-        dataSmsRu = smsResponse.json()
-        status = dataSmsRu.get('status')
-        code = dataSmsRu.get('code')
-        print(code)
-        if status != 'OK' or not code:
-            return Response({"error": SEND_VERIFY_ERROR}, status=400)
-
-        md5password = specialEncodePassword(str(code))
-
-        user = User.objects.create_user(
-            phoneNumber=formattedPhoneNumber,
-            firstName=firstName,
-            lastName=lastName,
-            password=str(code),
-            md5password=md5password
-        )
-
-        nowDate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        fullName = f"{firstName} {lastName}" if firstName and lastName else ""
-
-        form = 'User_ID, Password, PermissionGroup_ID, Checked, Language, Created, LastUpdated, Confirmed, RegistrationCode, Keyword, Login, Catalogue_ID, InsideAdminAccess, Auth_Hash, UserType, FullName, Email, Birthday, ncAttemptAuth, Account'
-        values = f"'{str(user.userId)}', '{md5password}', 2, 1, 'Russian', '{nowDate}', '{nowDate}', 0, '', NULL, {formattedPhoneNumber}, 0, 0, NULL, 'normal', '{fullName}', NULL, NULL, 0, NULL"
-
-        QUERY = f"INSERT User({form}) VALUES ({values});"
-        print('🚀 - QUERY:', QUERY)
-        # cursor.execute(QUERY)
-
-        return Response({
-            "success": f"На номер был отправлен пароль",
-            "formattedPhoneNumber": formattedPhoneNumber
-        })
-    except Exception as e:
-        print(str(e))
+    connection = connectToPersonaDB()
+    with connection.cursor() as cursor:
         try:
-            createdNowUser = User.objects.get(
-                phoneNumber=formattedPhoneNumber)
-            createdNowUser.delete()
-        except:
-            pass
-        return Response({
-            "error": f"Ошибка сервера"
-        }, status=400)
+            isUserAlreadyExist = User.objects.filter(
+                phoneNumber=formattedPhoneNumber).count() >= 1
+            if isUserAlreadyExist:
+                return Response({'error': 'Аккаунт с данным номером уже был создан'}, status=400)
+
+            registryLimiter.increment(addressIP)
+            smsResponse = requests.post(
+                f'https://sms.ru/code/call?phone={formattedPhoneNumber}&ip=-1&api_id={SMS_RU_API_KEY}'
+            )
+
+            if smsResponse.status_code != 200:
+                return Response({"error": SEND_VERIFY_ERROR}, status=400)
+
+            dataSmsRu = smsResponse.json()
+            status = dataSmsRu.get('status')
+            code = dataSmsRu.get('code')
+            print(code)
+            if status != 'OK' or not code:
+                return Response({"error": SEND_VERIFY_ERROR}, status=400)
+
+            md5password = specialEncodePassword(str(code))
+
+            # Узнаем какой ID не занят
+            cursor.execute("""
+                SELECT MIN(User_ID) + 1 AS next_id
+                FROM User
+                WHERE (User_ID + 1) NOT IN (SELECT User_ID FROM User)
+            """)
+            res = cursor.fetchone()
+            newUserId = res[0] if res[0] else 1
+
+            user = User.objects.create_user(
+                userId=newUserId,
+                phoneNumber=formattedPhoneNumber,
+                firstName=firstName,
+                lastName=lastName,
+                password=str(code)
+            )
+
+            nowDate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            fullName = f"{firstName} {lastName}" if firstName and lastName else ""
+
+            form = 'User_ID, Password, PermissionGroup_ID, Checked, Language, Created, LastUpdated, Confirmed, RegistrationCode, Keyword, Login, Catalogue_ID, InsideAdminAccess, Auth_Hash, UserType, FullName, Email, Birthday, ncAttemptAuth, Account'
+            values = f"'{user.userId}', '{md5password}', 2, 1, 'Russian', '{nowDate}', '{nowDate}', 0, '', NULL, '{formattedPhoneNumber}', 0, 0, NULL, 'normal', '{fullName}', NULL, NULL, 0, NULL"
+
+            QUERY = f"INSERT User({form}) VALUES ({values});"
+
+            cursor.execute(QUERY)
+
+            return Response({
+                "success": f"На номер был отправлен пароль",
+                "formattedPhoneNumber": formattedPhoneNumber
+            })
+        except Exception as e:
+            print(str(e))
+            try:
+                createdNowUser = User.objects.get(
+                    phoneNumber=formattedPhoneNumber)
+                createdNowUser.delete()
+            except:
+                pass
+            return Response({
+                "error": f"Ошибка сервера"
+            }, status=400)
