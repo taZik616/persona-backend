@@ -21,16 +21,25 @@ def LoginView(request):
     if not res['success']:
         return Response({"error": res.get('error')})
 
-    formattedPhoneNumber = res.get('formattedPhoneNumber')
+    try:
+        formattedPhoneNumber = res.get('formattedPhoneNumber')
 
-    serializer = ObtainAuthToken.serializer_class(
-        data={
-            'username':  formattedPhoneNumber,
-            'password': request.data.get('password')
-        }, context={'request': request})
+        serializer = ObtainAuthToken.serializer_class(
+            data={
+                'username':  formattedPhoneNumber,
+                'password': request.data.get('password')
+            }, context={'request': request})
 
-    serializer.is_valid(raise_exception=True)
-    user = serializer.validated_data['user']
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
 
-    token, created = Token.objects.get_or_create(user=user)
-    return Response({'token': token.key, 'created': created})
+        # Ну если пользователь смог залогиниться после регистрации,
+        # то это значит он получил код подтверждения 💯
+        if not user.isPhoneNumberVerified:
+            user.isPhoneNumberVerified = True
+            user.save()
+
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key, 'created': created})
+    except:
+        return Response({"error": 'Не удалось разрешить доступ'})
