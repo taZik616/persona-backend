@@ -3,3 +3,4 @@ from .compress_img import compressImg
 from .validate_and_format_phone_number import validateAndFormatPhoneNumber
 from .special_encode_password import specialEncodePassword
 from .custom_limiter import ActionLimiter
+from .send_code_to_phone import sendCodeToPhone

@@ -19,5 +19,7 @@ urlpatterns = [
     path('registry-send-code', views.RegistrySendCodeView),
     path('personal-info', views.PersonalInfoView.as_view()),
     path('change-password', views.ChangePasswordView),
+    path('recovery-password-send', views.RecoveryPasswordSendView),
+    path('recovery-password-confirm', views.RecoveryPasswordConfirmView),
     path('sync/', include(sync_urls)),
 ]

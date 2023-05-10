@@ -4,9 +4,10 @@ import requests
 from datetime import datetime
 from api.common_error_messages import SEND_VERIFY_ERROR
 from api.models.user import User
+
 from environment import SMS_RU_API_KEY
 
-from ..utils import connectToPersonaDB, validateAndFormatPhoneNumber, specialEncodePassword, ActionLimiter
+from ..utils import connectToPersonaDB, validateAndFormatPhoneNumber, specialEncodePassword, ActionLimiter, sendCodeToPhone
 
 INTERVAL = 60*60
 registryLimiter = ActionLimiter('registry-', 6, INTERVAL, INTERVAL)
@@ -30,7 +31,7 @@ def RegistrySendCodeView(request):
 
     res = validateAndFormatPhoneNumber(phoneNumber)
     if not res['success']:
-        return Response({"error": res.get('error')})
+        return Response({"error": res.get('error')}, status=400)
 
     formattedPhoneNumber = res.get('formattedPhoneNumber')
     firstName = request.data.get('firstName', '')
@@ -45,19 +46,11 @@ def RegistrySendCodeView(request):
                 return Response({'error': 'Аккаунт с данным номером уже был создан'}, status=400)
 
             registryLimiter.increment(addressIP)
-            smsResponse = requests.post(
-                f'https://sms.ru/code/call?phone={formattedPhoneNumber}&ip=-1&api_id={SMS_RU_API_KEY}'
-            )
+            codeSendRes = sendCodeToPhone(formattedPhoneNumber)
 
-            if smsResponse.status_code != 200:
-                return Response({"error": SEND_VERIFY_ERROR}, status=400)
-
-            dataSmsRu = smsResponse.json()
-            status = dataSmsRu.get('status')
-            code = dataSmsRu.get('code')
-            print(code)
-            if status != 'OK' or not code:
-                return Response({"error": SEND_VERIFY_ERROR}, status=400)
+            code = codeSendRes.get('code')
+            if not code:
+                return codeSendRes
 
             md5password = specialEncodePassword(str(code))
 
