@@ -13,13 +13,13 @@ def syncBrands(request):
     try:
         connection = connectToPersonaDB()
         with connection.cursor() as cursor:
-            category_fields = 'Subdivision_ID, Subdivision_Name, Description, Keywords, logo'
+            category_fields = 'Subdivision_ID, Subdivision_Name, Description, Keywords, logo, Checked'
             # К Parent_Sub_ID == 8 относятся бренды
             cursor.execute(
                 f'SELECT {category_fields} FROM Subdivision WHERE Parent_Sub_ID = 8')
             brands = cursor.fetchall()
             for brand in brands:
-                uniqueId, name, description, keywords, logoUrl = brand
+                uniqueId, name, description, keywords, logoUrl, isTop = brand
                 keywords = keywords if keywords is not None else ''
                 description = description if description is not None else ''
                 logoUrl = fetchAndSaveImage(logoUrl)
@@ -27,6 +27,7 @@ def syncBrands(request):
                     brandId=uniqueId,
                     defaults={
                         'name': name,
+                        'isTop': isTop,
                         'logoUrl': logoUrl,
                         'keywords': keywords,
                         'description': description,
