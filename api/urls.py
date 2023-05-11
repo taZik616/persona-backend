@@ -9,7 +9,10 @@ router = routers.SimpleRouter()
 # router.register(r'brands', views.BrandsView)
 
 sync_urls = [
-    path('users', sync.synсUsers),
+    path('users', sync.syncUsers),
+    path('products', sync.syncProducts),
+    path('brands', sync.syncBrands),
+    path('categories', sync.syncCategories),
 ]
 
 urlpatterns = [

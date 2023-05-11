@@ -8,10 +8,11 @@ class Brand(models.Model):
         default='', max_length=20, blank=False, null=False, primary_key=True)
     logoUrl = models.CharField(
         default='', max_length=500, blank=False, null=False)
+    description = models.CharField(default='', max_length=5000, blank=True)
     keywords = models.TextField(default='', max_length=20000, blank=True)
     gender = models.CharField(
         choices=GENDERS, max_length=20, blank=False, null=False)
-    isTop = models.BooleanField(default=False)
+    isTop = models.BooleanField(default=False, blank=True)
 
     class Meta:
         verbose_name = 'Бренд'

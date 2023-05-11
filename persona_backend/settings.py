@@ -129,6 +129,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 MEDIA_ROOT = BASE_DIR
+# Если поменяете переменную тут, то поменяйте и в api/sync_with_external_db/utils/fetch_and_save_image.py
 MEDIA_URL = '/media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

@@ -8,7 +8,7 @@ from api.utils import connectToPersonaDB
 
 @api_view(['POST'])
 # @permission_classes([IsAdminUser])
-def synсUsers(request):
+def syncUsers(request):
     try:
         connection = connectToPersonaDB()
         with connection.cursor() as cursor:
@@ -22,7 +22,7 @@ def synсUsers(request):
                 fullName = row[4]
                 email = row[5]
                 dob = row[6]
-                is_staff = str(row[7]) == '1'
+                is_staff = str(row[7]) == '3'
 
                 name_parts = str(fullName).split(' ')
                 firstName = name_parts[0] if len(name_parts) > 0 else ""
