@@ -5,8 +5,11 @@ from rest_framework.response import Response
 from api.models import Product, ProductCharacteristic, ProductVariant, Brand, Category
 from .utils import groupBy, getDescriptionForProductFields
 from api.utils import connectToPersonaDB
-from datetime import datetime
 import re
+from django.core.cache import cache
+from datetime import datetime
+from pytz import utc
+from django.utils.timezone import make_aware
 
 
 @api_view(['POST'])
@@ -37,6 +40,18 @@ def syncProducts(request):
                         brandName, size, color, isAvailable, isNew, \
                         keywords, priceGroup, manufacturer, country, \
                         podklad, sostav, collection, lastUpdate = row
+
+                    lastUpdate = utc.localize(lastUpdate)
+
+                    lastSync = cache.get('products-last-sync')
+                    if lastSync:
+                        lastSyncDate = datetime.strptime(
+                            lastSync, '%Y-%m-%d %H:%M:%S')
+                        if lastUpdate <= utc.localize(lastSyncDate):
+                            # filter(pk=productId).exists() - самый быстрый способ проверки
+                            if Product.objects.filter(pk=productId).exists():
+                                continue
+
                     keywords = keywords if keywords is not None else ''
                     collection = collection if collection is not None else ''
                     priceGroup = priceGroup if priceGroup is not None else ''
@@ -93,6 +108,8 @@ def syncProducts(request):
                             'product': product
                         }
                     )
+            dateNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cache.set('products-last-sync', dateNow)
             return Response({'success': 'Синхронизация продуктов прошла успешно'})
     except Exception as e:
         print(e)
