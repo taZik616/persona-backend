@@ -18,7 +18,7 @@ class Product(models.Model):
 
     keywords = models.CharField(default='', max_length=2000)
     price = models.FloatField(default=0.0, blank=False, null=False)
-    brand = models.OneToOneField(
+    brand = models.ForeignKey(
         Brand, on_delete=models.PROTECT, blank=True, null=True)
 
     collection = models.CharField(
@@ -32,18 +32,6 @@ class Product(models.Model):
     isNew = models.BooleanField(blank=False, null=False)
     lastUpdate = models.DateTimeField()
 
-    def __str__(self):
-        return f"{self.productName} - {self.productId}"
-
-    class Meta:
-        verbose_name = 'Продукт'
-        verbose_name_plural = '1. Продукты'
-
-
-class ProductCharacteristic(models.Model):
-    id = models.CharField(
-        unique=True, max_length=100, primary_key=True, blank=False, null=False)
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
     # Производитель
     manufacturer = models.CharField(default='', max_length=1000)
     country = models.CharField(default='', max_length=100)
@@ -51,13 +39,14 @@ class ProductCharacteristic(models.Model):
     podklad = models.CharField(default='', max_length=100)
     sostav = models.CharField(default='', max_length=300)
 
+    onlyOneVariant = models.BooleanField(default=True)
+
     def __str__(self):
-        return f"{self.product.productName}. manufacturer: {self.manufacturer}, \
-            country: {self.country}, podklad: {self.podklad}, sostav: {self.sostav}"
+        return f"{self.productName} - {self.productId}"
 
     class Meta:
-        verbose_name = 'Характеристика продукта'
-        verbose_name_plural = '3. Характеристики продуктов'
+        verbose_name = 'Продукт'
+        verbose_name_plural = '1. Продукты'
 
 
 class ProductVariant(models.Model):
@@ -67,10 +56,8 @@ class ProductVariant(models.Model):
     uniqueId = models.CharField(
         unique=True, max_length=100, primary_key=True, blank=False, null=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.product.productName}. size: {self.size}, \
-            color: {self.color}, idForBuying: {self.uniqueId}"
+    price = models.FloatField(default=0.0, blank=True, null=True)
+    isAvailable = models.BooleanField(blank=True, null=True)
 
     class Meta:
         verbose_name = 'Вариант продукта'
