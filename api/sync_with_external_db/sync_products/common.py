@@ -55,13 +55,6 @@ def prepareFields(row: tuple, isSingle: bool = False, podklads: dict = {}, sosta
     }
 
 
-# def loadImages():
-#     connection = connectToPersonaDB()
-#     with connection.cursor() as cursor:
-#         cursor.execute(
-#             "SELECT `ID`,`Field_ID`,`Message_ID`,`Priority`,`Name`,`Size`,`Path`,`Preview` FROM Multifield WHERE `Message_ID` = " + str(row[12]))
-
-
 PRODUCT_VARIANT_FIELDS = 'price, Message_ID, Parent_Message_ID, size, color, stock'
 
 

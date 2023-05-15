@@ -86,7 +86,6 @@ def productSyncFast():
                     )
             tz = timezone('Europe/Moscow')
             dateNow = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
-            print('🚀 - dateNow:', dateNow)
             cache.set('products-last-sync-fast', dateNow)
             return Response({'success': 'Синхронизация(1) продуктов прошла успешно'})
     except Exception as e:

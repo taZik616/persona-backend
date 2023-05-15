@@ -1,8 +1,8 @@
 from django.db import models
-from enumfields import EnumField
-from enum import Enum
-
+from django.dispatch import receiver
+from django.db.models.signals import pre_delete
 from .brand import Brand
+from os import path, remove
 
 
 class Product(models.Model):
@@ -62,3 +62,29 @@ class ProductVariant(models.Model):
     class Meta:
         verbose_name = 'Вариант продукта'
         verbose_name_plural = '2. Варианты продукта'
+
+
+class ProductImage(models.Model):
+    imageId = models.CharField(default='', max_length=100)
+    priority = models.IntegerField()
+    compressedImage = models.ImageField(upload_to='multifields-compressed/')
+    originalImage = models.ImageField(upload_to='multifields/')
+
+    class Meta:
+        verbose_name = 'Картинка товара'
+        verbose_name_plural = '3. Картинки товаров'
+
+    def __str__(self):
+        return f'{self.imageId}'
+
+
+@receiver(pre_delete, sender=ProductImage)
+def deleteImages(sender, instance, **kwargs):
+    if instance.compressedImage:
+        image_path = instance.compressedImage.path
+        if path.isfile(image_path):
+            remove(image_path)
+    if instance.originalImage:
+        image_path = instance.originalImage.path
+        if path.isfile(image_path):
+            remove(image_path)

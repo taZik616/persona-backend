@@ -13,6 +13,7 @@ sync_urls = [
     path('products', sync.syncProducts),
     path('brands', sync.syncBrands),
     path('categories', sync.syncCategories),
+    path('images', sync.syncImages),
 ]
 
 urlpatterns = [

@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from environment import DJANGO_SECRET_KEY, MEMCACHED_LOCATION, MYSQL_DB_PASSWORD, MYSQL_DB_USER
-
+from os import path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -128,7 +128,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-MEDIA_ROOT = BASE_DIR
+MEDIA_ROOT = path.join(BASE_DIR, 'media')
 # Если поменяете переменную тут, то поменяйте и в api/sync_with_external_db/utils/fetch_and_save_image.py
 MEDIA_URL = '/media/'
 # Default primary key field type

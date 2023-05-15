@@ -4,5 +4,4 @@ environment.py
 db.sqlite3
 poetry.lock
 migrations
-/another_images
-/resource
+/media
