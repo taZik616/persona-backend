@@ -1,0 +1,25 @@
+from django.http import QueryDict
+from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+
+from api.models import Category, CategoryLevel
+from api.serializers import CategorySerializer
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+
+
+class CategoryListView(ListAPIView):
+    serializer_class = CategorySerializer
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    ordering_fields = ['level', 'gender']
+    filterset_fields = ['parentId', 'gender', 'level']
+    ordering = ['level', 'gender']
+
+    def get_queryset(self):
+        items = Category.objects.all()
+        return self.filter_queryset(items)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

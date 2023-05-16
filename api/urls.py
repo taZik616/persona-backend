@@ -19,6 +19,7 @@ sync_urls = [
 urlpatterns = [
     path('', include(router.urls)),
     path('brands', views.BrandsView.as_view()),
+    path('categories', views.CategoryListView.as_view()),
     path('products', views.ProductListView.as_view()),
     path('products/<str:productId>/', views.ProductDetailView.as_view()),
     path('login', views.LoginView),
@@ -28,4 +29,5 @@ urlpatterns = [
     path('recovery-password-send', views.RecoveryPasswordSendView),
     path('recovery-password-confirm', views.RecoveryPasswordConfirmView),
     path('sync/', include(sync_urls)),
+    path('subcategoriesBindRandomProduct', views.subcategoriesBindRandomProduct)
 ]

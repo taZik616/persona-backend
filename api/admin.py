@@ -6,9 +6,16 @@ admin.site.register(User)
 admin.site.register(Brand)
 admin.site.register(HelpfulInfo)
 admin.site.register(AnotherImage)
-admin.site.register(Category)
 admin.site.register(MainContent)
 admin.site.register(ProductImage)
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'gender', 'level', 'categoryId']
+    ordering = ('level', 'gender')
+    search_fields = ('name', 'categoryId', 'keywords', 'description')
+    list_per_page = 150
 
 
 @admin.register(Product)

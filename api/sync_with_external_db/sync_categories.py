@@ -23,9 +23,9 @@ def syncCategories(request):
                 f'SELECT {category_fields} FROM Subdivision WHERE Parent_Sub_ID = 177')
             womenCategories = cursor.fetchall()
 
-            for rows in [menCategories, womenCategories]:
-                for index, row in enumerate(rows):
-                    gender = 'men' if index == 0 else 'women'
+            for index, rows in enumerate([menCategories, womenCategories]):
+                gender = 'men' if index == 0 else 'women'
+                for row in rows:
                     uniqueId, parentId, name, description, keywords = row
                     keywords = keywords if keywords is not None else ''
                     description = description if description is not None else ''
