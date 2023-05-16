@@ -1,3 +1,3 @@
 from .brand import BrandSerializer
 from .user import UserInfoSerializer
-from .product import ProductSerializer, ProductImageSerializer
+from .product import ProductSerializer, ProductImageSerializer, ProductDetailSerializer, ProductVariantSerializer
