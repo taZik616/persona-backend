@@ -1,9 +1,11 @@
+import mimetypes
+from uuid import uuid4
+import requests
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
-
+from django.core.files.base import ContentFile
 from api.models import Brand
-from api.sync_with_external_db.utils.fetch_and_save_image import fetchAndSaveImage
 from api.utils import connectToPersonaDB
 
 
@@ -22,21 +24,28 @@ def syncBrands(request):
                 uniqueId, name, description, keywords, logoUrl, isTop = brand
                 keywords = keywords if keywords is not None else ''
                 description = description if description is not None else ''
-                logoUrl = fetchAndSaveImage(logoUrl)
-                Brand.objects.update_or_create(
+
+                filePath = logoUrl[logoUrl.rindex(':') + 1:]
+                url = f"https://personashop.com/netcat_files/{filePath}"
+                response = requests.get(url)
+                fileExtension = mimetypes.guess_extension(
+                    response.headers.get("content-type"))
+                if not fileExtension:
+                    continue
+
+                fileName = f"{uuid4()}{fileExtension}"
+
+                brand, isCreated = Brand.objects.update_or_create(
                     brandId=uniqueId,
                     defaults={
                         'name': name,
                         'isTop': isTop,
-                        'logoUrl': logoUrl,
                         'keywords': keywords,
                         'description': description,
                         'gender': 'men',  # Как узнать men/women?
                     }
                 )
-                cursor.execute(
-                    f'SELECT {category_fields} FROM Subdivision WHERE Parent_Sub_ID = {uniqueId}'
-                )
+                brand.logo.save(fileName, ContentFile(response.content))
             return Response({'success': 'Синхронизация брендов прошла успешно'})
     except Exception as e:
         print(e)

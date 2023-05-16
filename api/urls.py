@@ -19,6 +19,7 @@ sync_urls = [
 urlpatterns = [
     path('', include(router.urls)),
     path('brands', views.BrandsView.as_view()),
+    path('products', views.ProductListView.as_view()),
     path('login', views.LoginView),
     path('registry-send-code', views.RegistrySendCodeView),
     path('personal-info', views.PersonalInfoView.as_view()),

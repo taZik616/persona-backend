@@ -75,8 +75,18 @@ def productSyncFast():
                 productVariants = list(
                     filter(lambda x: x[2] != fields['uniqueId'], productVariants))
 
+                isOneAvailable = any(
+                    variant[5] for variant in variants
+                )
+                product.isAvailable = isOneAvailable
+                product.save()
                 for variant in variants:
                     varFields = prepareVariantFields(variant)
+
+                    if not product.price and varFields['isAvailable']:
+                        product.price = varFields['price']
+                        product.isAvailable = True
+                        product.save()
                     ProductVariant.objects.update_or_create(
                         uniqueId=varFields['uniqueId'],
                         defaults={

@@ -64,9 +64,9 @@ def syncImagesWhichNotHere():
                 f"SELECT Message_ID, Priority, Path FROM Multifield WHERE Message_ID NOT IN ({','.join(existIds)})"
             )
             images = cursor.fetchall()
+            images = sorted(images, key=lambda image: image[0])
             for row in images:
                 imageId, priority, imagePath = row
-                print(row)
                 if '2281' in imagePath:
                     continue
 
@@ -105,6 +105,7 @@ def syncImagesByIds(ids: list):
                 f"SELECT Message_ID, Priority, Path FROM Multifield WHERE Message_ID IN ({messageIds})"
             )
             images = cursor.fetchall()
+            images = sorted(images, key=lambda image: image[0])
             for id in ids:
                 ProductImage.objects.filter(imageId=id).delete()
             for row in images:
@@ -145,6 +146,7 @@ def syncImagesHard():
         with connection.cursor() as cursor:
             cursor.execute("SELECT Message_ID, Priority, Path FROM Multifield")
             images = cursor.fetchall()
+            images = sorted(images, key=lambda image: image[0])
             for row in images:
                 imageId, priority, imagePath = row
                 if '2281' in imagePath:

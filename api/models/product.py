@@ -25,8 +25,6 @@ class Product(models.Model):
         default='', max_length=1000, blank=False, null=False)
 
     priceGroup = models.CharField(default='', max_length=200)
-    previewImages = models.CharField(
-        default='', max_length=3000, blank=False, null=False)
 
     isAvailable = models.BooleanField(blank=False, null=False)
     isNew = models.BooleanField(blank=False, null=False)
