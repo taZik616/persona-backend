@@ -55,14 +55,15 @@ def prepareFields(row: tuple, isSingle: bool = False, podklads: dict = {}, sosta
     }
 
 
-PRODUCT_VARIANT_FIELDS = 'price, Message_ID, Parent_Message_ID, size, color, stock'
+PRODUCT_VARIANT_FIELDS = 'price, Message_ID, Parent_Message_ID, size, color, stock, priceGroup'
 
 
 def prepareVariantFields(row: tuple):
-    price, uniqueId, parentId, size, color, stockCount = row
+    price, uniqueId, parentId, size, color, stockCount, priceGroup = row
     return {
         'uniqueId': uniqueId,
         'price': price,
+        'priceGroup': priceGroup or '' or '',
         'size': size,
         'color': color,
         'isAvailable': bool(stockCount),

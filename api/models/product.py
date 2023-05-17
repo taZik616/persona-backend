@@ -56,6 +56,7 @@ class ProductVariant(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.FloatField(default=0.0, blank=True, null=True)
     isAvailable = models.BooleanField(blank=True, null=True)
+    priceGroup = models.CharField(default='', max_length=200)
 
     class Meta:
         verbose_name = 'Вариант продукта'

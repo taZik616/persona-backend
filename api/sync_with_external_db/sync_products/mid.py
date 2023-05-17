@@ -85,6 +85,7 @@ def productSyncMid():
 
                     if not product.price and varFields['isAvailable']:
                         product.price = varFields['price']
+                        product.priceGroup = varFields['priceGroup']
                         product.isAvailable = True
                         product.save()
                     ProductVariant.objects.update_or_create(
