@@ -32,6 +32,11 @@ class ProductListView(ListAPIView):
     def get_queryset(self):
         items = Product.objects.select_related(
             'brand').filter(isAvailable=True)
+        productIds = self.request.GET.get('productId', '').split(',')
+
+        # Фильтруем по значениям `productId`
+        if productIds:
+            items = items.filter(productId__in=productIds)
         return self.filter_queryset(items)
 
     def list(self, request, *args, **kwargs):
