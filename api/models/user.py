@@ -55,6 +55,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     favorites = models.TextField(default='', max_length=9000, blank=True)
     isPhoneNumberVerified = models.BooleanField(default=False, blank=True)
 
+    subEmail = models.BooleanField(default=False, blank=True)
+    subSms = models.BooleanField(default=False, blank=True)
+    subPush = models.BooleanField(default=False, blank=True)
+
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
