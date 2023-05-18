@@ -32,37 +32,22 @@ class ProductListView(ListAPIView):
     def get_queryset(self):
         items = Product.objects.select_related(
             'brand').filter(isAvailable=True)
-        productIds = self.request.GET.get('productId', '').split(',')
+        productIds = self.request.GET.get('productId')
 
         # Фильтруем по значениям `productId`
         if productIds:
-            items = items.filter(productId__in=productIds)
+            items = items.filter(productId__in=productIds.split(','))
         return self.filter_queryset(items)
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         page = self.paginate_queryset(queryset)
 
-        images_dict = {}
-
-        imageIds = [product.productId for product in page]
-
-        # Получаем соответствующие картинки для каждого идентификатора
-        images = ProductImage.objects.filter(imageId__in=imageIds)
-        for image in images:
-            if image.imageId not in images_dict:
-                images_dict[image.imageId] = []
-
-            images_dict[image.imageId].append(image)
-
-        # Сохраняем картинки в каждом товаре
-        for product in page:
-            product.images = sorted(
-                images_dict.get(product.productId, []),
-                key=lambda image: image.priority
-            )
         serializer = self.get_serializer(page, many=True)
-        return Response(serializer.data)
+        return Response({
+            'count': queryset.count(),
+            'products': serializer.data
+        })
 
 
 class ProductDetailView(RetrieveAPIView):

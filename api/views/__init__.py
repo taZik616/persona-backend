@@ -7,3 +7,5 @@ from .recovery_password import RecoveryPasswordConfirmView, RecoveryPasswordSend
 from .product import ProductListView, ProductDetailView
 from .subcategories_bind_random_product import subcategoriesBindRandomProduct
 from .categories import CategoryListView
+from .favorites import FavoritesView
+from .basket import BasketView

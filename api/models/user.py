@@ -1,6 +1,7 @@
-from typing import Any, MutableMapping, Optional, Tuple
+from typing import Any
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from .product import Product, ProductVariant
 
 
 class UserManager(BaseUserManager):
@@ -70,3 +71,31 @@ class User(AbstractBaseUser, PermissionsMixin):
             return f"{self.phoneNumber}, {self.firstName} {self.lastName}"
         else:
             return self.phoneNumber
+
+
+class BasketItem(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE)
+    variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='basketItems')
+
+    class Meta:
+        verbose_name = 'Элемент корзины'
+        verbose_name_plural = 'Элементы корзины'
+
+    def __str__(self):
+        return f"user: '{self.user.phoneNumber}'. {self.product.productName} - {self.product.productId}, {self.variant.uniqueId}"
+
+
+class FavoriteItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='favoriteItems')
+
+    class Meta:
+        verbose_name = 'Элемент избранного'
+        verbose_name_plural = 'Элементы избранного'
+
+    def __str__(self):
+        return f"user: '{self.user.phoneNumber}'. {self.product.productName} - {self.product.productId}"

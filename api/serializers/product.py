@@ -19,6 +19,18 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ('productId', 'productName', 'price',
                   'priceGroup', 'collection', 'brand', 'images', 'onlyOneVariant')
 
+    def to_representation(self, instance):
+        imageIds = instance.productId
+
+        images = ProductImage.objects.filter(imageId=imageIds)
+
+        instance.images = sorted(
+            images,
+            key=lambda image: image.priority
+        )
+        representation = super().to_representation(instance)
+        return representation
+
 
 class ProductVariantSerializer(serializers.ModelSerializer):
     class Meta:

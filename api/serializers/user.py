@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from ..models import User
+from ..models import User, BasketItem, FavoriteItem
+from .product import ProductSerializer, ProductVariantSerializer
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
@@ -18,3 +19,20 @@ class UserInfoSerializer(serializers.ModelSerializer):
         instance.birthday = validated_data.get('birthday', instance.birthday)
         # instance.favorites = validated_data.get('favorites', instance.favorites)
         return instance
+
+
+class BasketItemsSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+    variant = ProductVariantSerializer()
+
+    class Meta:
+        model = BasketItem
+        fields = ('product', 'variant')
+
+
+class FavoriteItemsSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+
+    class Meta:
+        model = FavoriteItem
+        fields = ('product',)
