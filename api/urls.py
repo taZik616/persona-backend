@@ -24,6 +24,7 @@ urlpatterns = [
     path('products/<str:productId>', views.ProductDetailView.as_view()),
     path('favorites', views.FavoritesView.as_view()),
     path('basket', views.BasketView.as_view()),
+    path('main-content', views.MainContentView),
     path('login', views.LoginView),
     path('registry-send-code', views.RegistrySendCodeView),
     path('personal-info', views.PersonalInfoView.as_view()),

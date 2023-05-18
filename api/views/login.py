@@ -42,4 +42,4 @@ def LoginView(request):
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key, 'created': created})
     except:
-        return Response({"error": 'Не удалось разрешить доступ'})
+        return Response({"error": 'Не удалось разрешить доступ'}, status=400)

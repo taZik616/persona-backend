@@ -2,12 +2,14 @@ from django.contrib import admin
 
 from api.models import Brand, MainContent, AnotherImage, User, \
     Category, ProductVariant, Product, ProductImage, \
-    FavoriteItem, BasketItem
+    FavoriteItem, BasketItem, OtherContent, MainSwiperImage
 
 admin.site.register(User)
 admin.site.register(Brand)
 admin.site.register(AnotherImage)
 admin.site.register(MainContent)
+admin.site.register(MainSwiperImage)
+admin.site.register(OtherContent)
 admin.site.register(ProductImage)
 admin.site.register(FavoriteItem)
 admin.site.register(BasketItem)

@@ -44,7 +44,7 @@ class Product(models.Model):
 
     class Meta:
         verbose_name = 'Продукт'
-        verbose_name_plural = '1. Продукты'
+        verbose_name_plural = '1.1. Продукты'
 
 
 class ProductVariant(models.Model):
@@ -60,7 +60,7 @@ class ProductVariant(models.Model):
 
     class Meta:
         verbose_name = 'Вариант продукта'
-        verbose_name_plural = '2. Варианты продукта'
+        verbose_name_plural = '1.2. Варианты продукта'
 
 
 class ProductImage(models.Model):
@@ -71,7 +71,7 @@ class ProductImage(models.Model):
 
     class Meta:
         verbose_name = 'Картинка товара'
-        verbose_name_plural = '3. Картинки товаров'
+        verbose_name_plural = '1.3. Картинки товаров'
 
     def __str__(self):
         return f'{self.imageId}'

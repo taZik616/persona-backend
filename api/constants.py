@@ -4,9 +4,6 @@ GENDERS = (
 )
 
 MAIN_CONTENTS = (
-    ('MainSwiper', 'Главный свайпер'),
-    ('BannerCard', 'Картинка под главным свайпером'),
-    # Lists and Swipers
     ('CategoriesList', 'Список категорий'),
     ('BrandsSwiper', 'Свайпер брендов'),
     ('BrandsList', 'Слайдер брендов'),

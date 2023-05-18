@@ -21,7 +21,7 @@ class ProductListView(ListAPIView):
                        filters.SearchFilter, DjangoFilterBackend]
     ordering_fields = ['price', 'lastUpdate']
     filterset_fields = [
-        'isNew', 'subcategoryId', 'categoryId', 'brand__brandId'  # 'productId',
+        'isNew', 'subcategoryId', 'categoryId', 'brand__brandId', 'priceGroup'  # 'productId',
     ]
     ordering = ['-lastUpdate']
     search_fields = [

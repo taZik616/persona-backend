@@ -1,24 +1,77 @@
 from django.db import models
 from api.constants import GENDERS, MAIN_CONTENTS
+from django.db import models
+
+
+class MainSwiperImage(models.Model):
+    imageUrl = models.URLField()
+    # Здесь будут фильтры для просмотра товаров соответствующих картинке
+    productFilters = models.JSONField()
+
+    class Meta:
+        verbose_name = 'Картинка для свайпера'
+        verbose_name_plural = '2.2. Картинки для свайпера'
+
+
+class OtherContent(models.Model):
+    type = models.CharField(max_length=200, choices=MAIN_CONTENTS)
+    title = models.CharField(max_length=100)
+    # Я без понятия что еще юзать если не джсон
+    items = models.JSONField(help_text='''
+# BrandsList 'Список брендов'<br>
+{
+  id: string
+  brandId: number
+  imgUri: string
+  logoUri: string
+}<br><br>
+# BrandsSwiper 'Свайпер брендов'<br>
+{
+  id: string
+  brandId: number
+  imgUri: string
+}<br><br>
+# CategoriesList 'Список категорий'<br>
+{
+  id: string
+  categoryId: number
+  imgUri: string
+  name: string
+}<br><br>
+# FashionList 'Список товаров'<br>
+{
+  id: string
+  productIds: number[]
+  imgUri: string
+}<br><br>
+# FashionSwiper 'Свайпер товаров'<br>
+{
+  id: string
+  productIds: number[]
+  imgUri: string
+}
+''')
+
+    class Meta:
+        verbose_name = 'Доп. контент'
+        verbose_name_plural = '2.3. Доп. контент'
 
 
 class MainContent(models.Model):
     """
     Модель которая отвечает за содержание главной страницы приложения
     """
-    type = models.CharField(
-        max_length=100, choices=MAIN_CONTENTS, default='', blank=False, null=False)
+    mainSwiperImages = models.ManyToManyField(MainSwiperImage)
+    bannerCard = models.URLField()
+    otherContent = models.ManyToManyField(OtherContent)
     gender = models.CharField(
-        max_length=10, choices=GENDERS, default='', blank=False, null=False)
-    bannerCardUri = models.CharField(
-        default='', max_length=200, blank=True, null=True)
-    title = models.CharField(
-        default='', max_length=100, blank=True, null=True)
-    items = models.CharField(default='', max_length=500)
+        max_length=10, choices=GENDERS, default='', blank=False, null=False
+    )
+    isInactive = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name = 'Элемент содержания'
-        verbose_name_plural = 'Содержание главной страницы'
+        verbose_name = 'Содержание главной страницы'
+        verbose_name_plural = '2.1. Содержание главных страниц'
 
     def __str__(self):
-        return self.NameSlider
+        return f'{self.pk} - {self.gender}, active: [{" " if self.isInactive else "x"}]'

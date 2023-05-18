@@ -10,3 +10,4 @@ from .categories import CategoryListView
 from .favorites import FavoritesView
 from .basket import BasketView
 from .helpful_info import HelpfulInfoView
+from .main_content import MainContentView
