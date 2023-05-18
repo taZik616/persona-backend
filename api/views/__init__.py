@@ -9,3 +9,4 @@ from .subcategories_bind_random_product import subcategoriesBindRandomProduct
 from .categories import CategoryListView
 from .favorites import FavoritesView
 from .basket import BasketView
+from .helpful_info import HelpfulInfoView

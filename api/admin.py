@@ -1,12 +1,11 @@
 from django.contrib import admin
 
-from api.models import Brand, HelpfulInfo, AnotherImage, User, \
-    Category, MainContent, ProductVariant, Product, ProductImage, \
+from api.models import Brand, MainContent, AnotherImage, User, \
+    Category, ProductVariant, Product, ProductImage, \
     FavoriteItem, BasketItem
 
 admin.site.register(User)
 admin.site.register(Brand)
-admin.site.register(HelpfulInfo)
 admin.site.register(AnotherImage)
 admin.site.register(MainContent)
 admin.site.register(ProductImage)
