@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Product, ProductImage, ProductVariant
+from api.models import Product, ProductImage, ProductVariant, Color
 from api.serializers import BrandSerializer
 
 
@@ -33,9 +33,21 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductVariantSerializer(serializers.ModelSerializer):
+    colorHex = serializers.SerializerMethodField()
+
+    def get_colorHex(self, instance):
+        colorObj = Color.objects.filter(name=instance.color).first()
+        if colorObj:
+            return colorObj.hex
+        else:
+            return ''
+
     class Meta:
         model = ProductVariant
-        fields = ('size', 'color', 'uniqueId', 'price', 'isAvailable')
+        fields = (
+            'size', 'color', 'colorHex',
+            'uniqueId', 'price', 'isAvailable'
+        )
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):

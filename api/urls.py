@@ -1,12 +1,7 @@
 from django.urls import path, include
 
 from . import views
-
-from rest_framework import routers
 from . import sync_with_external_db as sync
-
-router = routers.SimpleRouter()
-# router.register(r'brands', views.BrandsView)
 
 sync_urls = [
     path('users', sync.syncUsers),
@@ -14,10 +9,10 @@ sync_urls = [
     path('brands', sync.syncBrands),
     path('categories', sync.syncCategories),
     path('images', sync.syncImages),
+    path('colors', sync.syncColors),
 ]
 
 urlpatterns = [
-    path('', include(router.urls)),
     path('brands', views.BrandsView.as_view()),
     path('categories', views.CategoryListView.as_view()),
     path('products', views.ProductListView.as_view()),

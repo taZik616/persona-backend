@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from api.models import Brand, MainContent, AnotherImage, User, \
     Category, ProductVariant, Product, ProductImage, \
-    FavoriteItem, BasketItem, OtherContent, MainSwiperImage
+    FavoriteItem, BasketItem, OtherContent, MainSwiperImage, Color
 
 admin.site.register(User)
 admin.site.register(Brand)
@@ -13,6 +13,13 @@ admin.site.register(OtherContent)
 admin.site.register(ProductImage)
 admin.site.register(FavoriteItem)
 admin.site.register(BasketItem)
+
+
+@admin.register(Color)
+class ColorAdmin(admin.ModelAdmin):
+    ordering = ('name',)
+    search_fields = ('name', 'hex')
+    list_per_page = 150
 
 
 @admin.register(Category)
