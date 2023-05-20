@@ -17,7 +17,8 @@ def ChangePasswordView(request):
 
         if not user.check_password(password):
             return Response({'error': 'Пароль от аккаунта и введенный не совпадают'}, status=400)
-
+        if not newPassword:
+            return Response({'error': 'Укажите новый пароль'}, status=400)
         user.set_password(newPassword)
         hashedPassword = user.password
 
