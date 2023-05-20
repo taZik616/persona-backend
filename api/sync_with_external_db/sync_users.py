@@ -7,7 +7,7 @@ from api.utils import connectToPersonaDB
 
 
 @api_view(['POST'])
-# @permission_classes([IsAdminUser])
+@permission_classes([IsAdminUser])
 def syncUsers(request):
     try:
         connection = connectToPersonaDB()

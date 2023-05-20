@@ -28,5 +28,6 @@ urlpatterns = [
     path('recovery-password-confirm', views.RecoveryPasswordConfirmView),
     path('sync/', include(sync_urls)),
     path('info/<str:infoName>', views.HelpfulInfoView.as_view()),
-    path('subcategoriesBindRandomProduct', views.subcategoriesBindRandomProduct)
+    path('subcategories-bind-random-product',
+         views.subcategoriesBindRandomProduct)
 ]

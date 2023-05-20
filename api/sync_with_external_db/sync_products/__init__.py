@@ -28,7 +28,7 @@ AvailableSyncVariants = [1, 2, 3]
 
 
 @api_view(['POST'])
-# @permission_classes([IsAdminUser])
+@permission_classes([IsAdminUser])
 def syncProducts(request):
     syncVariant = int(request.data.get('syncVariant', 3))
 

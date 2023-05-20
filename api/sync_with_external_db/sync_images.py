@@ -30,7 +30,7 @@ AvailableSyncVariants = [1, 2, 3]
 
 
 @api_view(['POST'])
-# @permission_classes([IsAdminUser])
+@permission_classes([IsAdminUser])
 def syncImages(request):
     syncVariant = int(request.data.get('syncVariant', 2))
     idsToUpdate = request.data.get('idsToUpdate')

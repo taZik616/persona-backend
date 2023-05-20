@@ -42,5 +42,5 @@ def deletePreviousImage(sender, instance, **kwargs):
         except sender.DoesNotExist:
             return
         if old_instance.logo != instance.logo:
-            if old_instance.categoryPreviewImage:
+            if old_instance.logo:
                 default_storage.delete(old_instance.logo.path)

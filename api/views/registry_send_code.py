@@ -1,11 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-import requests
 from datetime import datetime
-from api.common_error_messages import SEND_VERIFY_ERROR
 from api.models.user import User
-
-from environment import SMS_RU_API_KEY
 
 from ..utils import connectToPersonaDB, validateAndFormatPhoneNumber, specialEncodePassword, ActionLimiter, sendCodeToPhone
 
