@@ -42,7 +42,7 @@ brew install memcached
 Запустите локально процесс memcached:
 
 ```sh
-memcached -m 64 -p 11211 -u memcached -l 127.0.0.1
+memcached -m 64 -p 12321 -u root -l 127.0.0.1
 ```
 
 `-m 64` - кол-во используемой памяти(МБ)
