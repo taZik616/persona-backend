@@ -6,8 +6,10 @@ from api.utils import connectToPersonaDB
 from django.core.cache import cache
 from datetime import datetime
 from pytz import timezone
+from celery import shared_task
 
 
+@shared_task
 def productSyncFast():
     try:
         connection = connectToPersonaDB()
@@ -98,7 +100,7 @@ def productSyncFast():
             tz = timezone('Europe/Moscow')
             dateNow = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
             cache.set('products-last-sync-fast', dateNow)
-            return Response({'success': 'Синхронизация(1) продуктов прошла успешно'})
+            # return Response({'success': 'Синхронизация(1) продуктов прошла успешно'})
     except Exception as e:
         print(e)
-        return Response({'error': 'При синхронизации продуктов со сторонней БД произошла ошибка'}, status=400)
+        # return Response({'error': 'При синхронизации продуктов со сторонней БД произошла ошибка'}, status=400)

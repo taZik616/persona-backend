@@ -8,6 +8,7 @@ from rest_framework.response import Response
 import mimetypes
 from uuid import uuid4
 from django.core.files.base import ContentFile
+from celery import shared_task
 
 
 # Варианты синхронизации:
@@ -39,19 +40,20 @@ def syncImages(request):
         return Response({'error': 'Недопустимое значение варианта синхронизации'}, status=400)
 
     if syncVariant == 1:
-        return syncImagesWhichNotHere()
+        syncImagesWhichNotHere.delay()
     if syncVariant == 2:
         if not idsToUpdate:
             return Response({'error': 'Для обновления картинок по IDs нужно указать их через запятую в поле "idsToUpdate"'}, status=400)
         ids = splitString(idsToUpdate)
-        return syncImagesByIds(ids)
+        syncImagesByIds.delay(ids)
     if syncVariant == 3:
-        return syncImagesHard()
+        syncImagesHard.delay()
+    return Response({'success': 'Синхронизация картинок была запущенна'})
 
 
 BASE_URL = 'https://personashop.com'
 
-
+@shared_task
 def syncImagesWhichNotHere():
     try:
         connection = connectToPersonaDB()
@@ -89,12 +91,12 @@ def syncImagesWhichNotHere():
                 imageInstance.compressedImage.save(
                     fileName, ContentFile(compressedImage))
                 imageInstance.save()
-            return Response({'success': 'Синхронизация(1) картинок прошла успешно'})
+            # return Response({'success': 'Синхронизация(1) картинок прошла успешно'})
     except Exception as e:
         print(e)
-        return Response({'error': 'При синхронизации картинок со сторонней БД произошла ошибка'}, status=400)
+        # return Response({'error': 'При синхронизации картинок со сторонней БД произошла ошибка'}, status=400)
 
-
+@shared_task
 def syncImagesByIds(ids: list):
     try:
         connection = connectToPersonaDB()
@@ -133,12 +135,12 @@ def syncImagesByIds(ids: list):
                 imageInstance.compressedImage.save(
                     fileName, ContentFile(compressedImage))
                 imageInstance.save()
-            return Response({'success': 'Синхронизация(2) картинок прошла успешно'})
+            # return Response({'success': 'Синхронизация(2) картинок прошла успешно'})
     except Exception as e:
         print(e)
-        return Response({'error': 'При синхронизации картинок со сторонней БД произошла ошибка'}, status=400)
+        # return Response({'error': 'При синхронизации картинок со сторонней БД произошла ошибка'}, status=400)
 
-
+@shared_task
 def syncImagesHard():
     try:
         connection = connectToPersonaDB()
@@ -171,6 +173,7 @@ def syncImagesHard():
                 imageInstance.compressedImage.save(
                     fileName, ContentFile(compressedImage))
                 imageInstance.save()
-            return Response({'success': 'Синхронизация картинок прошла успешно'})
-    except:
-        return Response({'error': 'При синхронизации картинок со сторонней БД произошла ошибка'}, status=400)
+            # return Response({'success': 'Синхронизация картинок прошла успешно'})
+    except Exception as e:
+        print(e)
+        # return Response({'error': 'При синхронизации картинок со сторонней БД произошла ошибка'}, status=400)

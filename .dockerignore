@@ -1,0 +1,9 @@
+/myenv
+__pycache__
+migrations
+poetry.lock
+migrations
+/media
+/static
+.git
+db.sqlite3

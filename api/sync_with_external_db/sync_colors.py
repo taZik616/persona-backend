@@ -7,11 +7,11 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from api.models import Color
 from api.utils import connectToPersonaDB
+from celery import shared_task
 
 
-@api_view(['POST'])
-@permission_classes([IsAdminUser])
-def syncColors(request):
+@shared_task
+def syncColorsTask():
     try:
         connection = connectToPersonaDB()
         with connection.cursor() as cursor:
@@ -32,10 +32,16 @@ def syncColors(request):
                     name=name,
                     defaults={'hex': colorHex}
                 )
-            return Response({'success': 'Синхронизация цветов прошла успешно'})
+            # return Response({'success': 'Синхронизация цветов прошла успешно'})
     except Exception as e:
         print(e)
-        return Response({'error': 'При синхронизации цветов со сторонней БД произошла ошибка'}, status=400)
+        # return Response({'error': 'При синхронизации цветов со сторонней БД произошла ошибка'}, status=400)
+    
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def syncColors(request):
+    syncColorsTask.delay()
+    return Response({'success': 'Синхронизация цветов была запущенна'})
 
 
 def colorHexFromImage(imageUrl):

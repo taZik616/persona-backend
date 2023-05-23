@@ -17,7 +17,7 @@ class BrandsView(APIView):
         if 'brandId' in request.data:
             try:
                 brand = Brand.objects.get(brandId=request.data['brandId'])
-                serialized_data = BrandSerializer(brand, many=False).data
+                serialized_data = BrandSerializer(brand, many=False, context={'request': request}).data
                 return Response(serialized_data)
             except Brand.DoesNotExist:
                 return Response({'error': 'Бренд с данным идентификатором не найден'}, status=400)
@@ -34,7 +34,7 @@ class BrandsView(APIView):
                         return Response({'error': GENDER_MUST_BE}, status=400)
 
                     queryset = queryset.filter(gender=gender)
-                serialized_data = BrandSerializer(queryset, many=True).data
+                serialized_data = BrandSerializer(queryset, many=True, context={'request': request}).data
                 return Response(serialized_data)
             except:
                 return Response({'error': 'Не удалось вернуть список брендов'}, status=400)

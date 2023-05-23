@@ -1,0 +1,61 @@
+version: "3.4"
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbitmq
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+    restart: on-failure
+
+  app:
+    build:
+      context: .
+    container_name: app
+    command: bash runapp.sh
+    depends_on:
+      - memcache
+      - rabbitmq
+      - db
+    ports:
+      - "2006:2006"
+    hostname: app
+    image: app-image
+    restart: on-failure
+    volumes:
+      - media:/project/media
+
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=persona_db
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=1234
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  celery_worker:
+    build:
+      context: .
+    command: celery -A persona_backend worker -l info
+    container_name: celery_worker
+    depends_on:
+      - rabbitmq
+    hostname: celery_worker
+    image: app-image
+    restart: on-failure
+    volumes:
+      - media:/project/media
+
+  memcache:
+    image: memcached
+    ports:
+      - "11211:11211"
+    entrypoint:
+      - memcached
+
+volumes:
+  postgres_data:
+  media:

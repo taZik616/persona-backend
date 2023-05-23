@@ -36,11 +36,11 @@ def syncProducts(request):
         return Response({'error': 'Недопустимое значение варианта синхронизации'}, status=400)
 
     if syncVariant == 3:
-        return productSyncHard()
+        productSyncHard.delay()
     if syncVariant == 2:
-        return productSyncMid()
+        productSyncMid.delay()
     if syncVariant == 1:
-        return productSyncFast()
-
+        productSyncFast.delay()
+    return Response({'success': 'Синхронизация товаров была запущенна'})
 # descriptionName, podkladName, countryName, \
 #     sostavName, manufacturerName = getDescriptionForProductFields().values()

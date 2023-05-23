@@ -7,11 +7,11 @@ from rest_framework.response import Response
 from django.core.files.base import ContentFile
 from api.models import Brand
 from api.utils import connectToPersonaDB
+from celery import shared_task
 
 
-@api_view(['POST'])
-@permission_classes([IsAdminUser])
-def syncBrands(request):
+@shared_task
+def syncBrandsTask():
     try:
         connection = connectToPersonaDB()
         with connection.cursor() as cursor:
@@ -46,7 +46,14 @@ def syncBrands(request):
                     }
                 )
                 brand.logo.save(fileName, ContentFile(response.content))
-            return Response({'success': 'Синхронизация брендов прошла успешно'})
+            # return Response({'success': 'Синхронизация брендов прошла успешно'})
     except Exception as e:
         print(e)
-        return Response({'error': 'При синхронизации брендов со сторонней БД произошла ошибка'}, status=400)
+        # return Response({'error': 'При синхронизации брендов со сторонней БД произошла ошибка'}, status=400)
+
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def syncBrands(request):
+    syncBrandsTask.delay()
+    return Response({'success': 'Синхронизация брендов была запущенна'})

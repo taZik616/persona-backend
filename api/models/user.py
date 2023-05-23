@@ -52,7 +52,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     lastName = models.CharField(max_length=40, blank=True)
     email = models.EmailField(max_length=200, blank=True)
     birthday = models.CharField(max_length=120, default='', blank=True)
-    favorites = models.TextField(default='', max_length=9000, blank=True)
     isPhoneNumberVerified = models.BooleanField(default=False, blank=True)
 
     subEmail = models.BooleanField(default=False, blank=True)

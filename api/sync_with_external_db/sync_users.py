@@ -4,11 +4,11 @@ from rest_framework.response import Response
 
 from api.models.user import User
 from api.utils import connectToPersonaDB
+from celery import shared_task
 
 
-@api_view(['POST'])
-@permission_classes([IsAdminUser])
-def syncUsers(request):
+@shared_task
+def syncUsersTask():
     try:
         connection = connectToPersonaDB()
         with connection.cursor() as cursor:
@@ -46,3 +46,10 @@ def syncUsers(request):
         return Response({'success': 'Синхронизация прошла успешно'})
     except:
         return Response({'error': 'Ошибка синхронизации'})
+    
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def syncUsers(request):
+    syncUsersTask.delay()
+    return Response({'success': 'Синхронизация пользователей была запущенна'})

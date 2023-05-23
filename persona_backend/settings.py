@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from environment import DJANGO_SECRET_KEY, MEMCACHED_LOCATION, MYSQL_DB_PASSWORD, MYSQL_DB_USER
+from environment import DJANGO_SECRET_KEY, MEMCACHED_LOCATION, MYSQL_DB_PASSWORD, MYSQL_DB_USER, DJANGO_DB_CONFIG
 from os import path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,8 +13,14 @@ SECRET_KEY = DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CSRF_TRUSTED_ORIGINS = ['http://89.108.71.146:30']
+ALLOWED_HOSTS = ['89.108.71.146', '127.0.0.1:2006', '127.0.0.1']
 
-ALLOWED_HOSTS = ['89.108.71.146', '127.0.0.1']
+CELERY_BROKER_URL = 'pyamqp://rabbitmq:5672'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Moscow'
+CELERY_CACHE_BACKEND = 'django-cache'
 
 # Application definition
 
@@ -29,6 +35,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework.authtoken',
     'django_filters',
+    'django_celery_results',
 ]
 
 REST_FRAMEWORK = {
@@ -85,10 +92,7 @@ WSGI_APPLICATION = 'persona_backend.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': DJANGO_DB_CONFIG
 }
 
 
