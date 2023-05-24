@@ -1,27 +1,72 @@
 # Как запустить проект?
 
-### 1. Сначала создаем виртуальное окружение Python
+А это очень легко, просто с помощью `docker-compose` 😊
+
+## Настройте конфиги
+
+Создайте в корне проекта и настройте `environment.py` файл(см. `environment.example.py`)
+
+> Для представления `db` в файле `docker-compose.yml` установите env переменные
+
+## Запускаем эту команду в корне проекта
 
 ```sh
-python -m venv myenv
-source myenv/bin/activate
+docker-compose build
+docker-compose up
 ```
 
-### 3. Запустите установку зависимостей
+или, если она не работает
+
+```sh
+docker compose build
+docker compose up
+```
+
+## Server setup
+
+```sh
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg
+
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+Команды для создания супер пользователя
+
+```sh
+docker exec -it CONTAINER_ID bash
+
+python manage.py createsuperuser
+```
+
+> `cmd + D` - выйти
+
+## Запуск без Docker
+
+### 1. Запустите установку зависимостей
 
 ```sh
 pip install -r reqs.txt
 ```
 
-### 4. Запустить миграции
+### 2. Запустить миграции
 
 ```sh
-myenv/bin/python manage.py makemigrations api
-myenv/bin/python manage.py makemigrations
-myenv/bin/python manage.py migrate
+python manage.py makemigrations api
+python manage.py makemigrations
+python manage.py migrate
 ```
 
-### 5. Установите и запустите memcached
+### 3. Установите и запустите memcached
 
 С сайта <https://memcached.org/downloads>
 
@@ -41,16 +86,10 @@ memcached -m 64 -p 12321 -u root -l 127.0.0.1
 `-l 127.0.0.1` - расположение сервиса
 `-p 1121` - порт
 
-### Добавьте значения в файл environment.py
+> Ну там еще настройте postgresql и celery... Кароч качайте докер лучше
 
-Создайте в той же директории, где находиться `environment.example.py`, файл `environment.py` с переменной `MEMCACHED_LOCATION`:
-
-```py
-MEMCACHED_LOCATION = 'LOCATION:PORT'
-```
-
-### 6. Запустите сервер
+### N. Запустите сервер
 
 ```sh
-myenv/bin/python manage.py runserver
+python manage.py runserver
 ```

@@ -37,7 +37,7 @@ class FavoritesView(APIView):
             FavoriteItem.objects.create(product=product, user=request.user)
 
             return Response({
-                'success': 'Вы добавили товар в корзину',
+                'success': 'Вы добавили товар в избранное',
             })
         except:
             return Response({'error': 'Не удалось добавить товар в избранное'}, status=400)
@@ -50,7 +50,7 @@ class FavoritesView(APIView):
             FavoriteItem.objects.filter(
                 product__productId=productId, user=request.user).delete()
             return Response({
-                'success': 'Вы успешно удалили товар из корзины'
+                'success': 'Вы успешно удалили товар из избранных'
             })
         except:
             return Response({'error': 'Не удалось вернуть список товаров в избранном'}, status=400)

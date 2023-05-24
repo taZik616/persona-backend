@@ -59,7 +59,7 @@ class ProductDetailView(RetrieveAPIView):
         instance = self.get_object()
         variants = ProductVariant.objects.filter(product=instance)
 
-        # Получаем соотvariants = ProductVariant.objects.filter(product=instance)ветствующие картинки для каждого идентификатора
+        # Получаем соответствующие картинки для каждого идентификатора
         images = ProductImage.objects.filter(imageId=instance.productId)
 
         # Добавляем картинки в сериализатор товара

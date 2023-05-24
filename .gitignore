@@ -6,3 +6,4 @@ poetry.lock
 migrations
 /media
 /static
+.DS_Store

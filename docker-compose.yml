@@ -30,9 +30,10 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=persona_db
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=1234
+      POSTGRES_DB: persona_db
+      POSTGRES_USER: postgress_root
+      POSTGRES_PASSWORD: 1234
+    restart: on-failure
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
