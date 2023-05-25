@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Product, ProductImage, ProductVariant, Color
+from api.models import Product, ProductImage, ProductVariant, Color, Category, CategoryLevel
 from api.serializers import BrandSerializer
 
 
@@ -13,10 +13,18 @@ class ProductImageSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     brand = BrandSerializer()
     images = ProductImageSerializer(many=True, read_only=True)
+    gender = serializers.SerializerMethodField()
+
+    def get_gender(self, instance):
+        gender = Category.objects.filter(
+            level=CategoryLevel.CATEGORY,
+            categoryId=instance.categoryId
+        ).first().gender
+        return gender if gender  else ''
 
     class Meta:
         model = Product
-        fields = ('productId', 'productName', 'price', 'isAvailable',
+        fields = ('productId', 'productName', 'price', 'isAvailable', 'gender',
                   'priceGroup', 'collection', 'brand', 'images', 'onlyOneVariant')
 
     def to_representation(self, instance):
@@ -54,12 +62,20 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     brand = BrandSerializer()
     variants = ProductVariantSerializer(many=True, read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
+    gender = serializers.SerializerMethodField()
+
+    def get_gender(self, instance):
+        gender = Category.objects.filter(
+            level=CategoryLevel.CATEGORY,
+            categoryId=instance.categoryId
+        ).first().gender
+        return gender if gender  else ''
 
     class Meta:
         model = Product
         fields = (
-            'productId', 'productName', 'price', 'onlyOneVariant',
-            'priceGroup', 'collection', 'brand', 'images', 'variants',
-            'manufacturer', 'country', 'podklad', 'sostav', 'isAvailable',
-            'description'
+            'productId', 'productName', 'price', 'priceGroup', 'gender',
+            'onlyOneVariant', 'collection', 'isAvailable', 'description',
+            'manufacturer', 'country', 'podklad', 'sostav', 
+            'brand', 'images', 'variants',
         )

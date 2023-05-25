@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 
-from api.models import Product, ProductImage, ProductVariant
+from api.models import Product, ProductImage, ProductVariant, Category, CategoryLevel
 from api.serializers import ProductSerializer, ProductDetailSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
@@ -33,6 +33,14 @@ class ProductListView(ListAPIView):
         items = Product.objects.select_related(
             'brand').filter(isAvailable=True)
         productIds = self.request.GET.get('productId')
+        gender = self.request.GET.get('gender')
+        if gender == 'men' or gender == 'women':
+            categoryIdsByGender = Category.objects.filter(
+                level=CategoryLevel.CATEGORY,
+                gender=gender
+            ).values_list('categoryId', flat=True)
+            categoryIdsByGender = [str(catId) for catId in categoryIdsByGender]
+            items = items.filter(categoryId__in=categoryIdsByGender)
 
         # Фильтруем по значениям `productId`
         if productIds:
