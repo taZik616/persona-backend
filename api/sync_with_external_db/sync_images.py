@@ -78,7 +78,7 @@ def syncImagesWhichNotHere():
                 if not fileExtension:
                     continue
 
-                compressedImage = compressImage(
+                (withoutResizing, resizedImage) = compressImage(
                     response.content, fileExtension[1:])
 
                 fileName = f"{uuid4()}{fileExtension}"
@@ -87,9 +87,9 @@ def syncImagesWhichNotHere():
                 imageInstance.imageId = imageId
                 imageInstance.priority = int(priority)
                 imageInstance.originalImage.save(
-                    fileName, ContentFile(response.content))
+                    fileName, ContentFile(withoutResizing))
                 imageInstance.compressedImage.save(
-                    fileName, ContentFile(compressedImage))
+                    fileName, ContentFile(resizedImage))
                 imageInstance.save()
             # return Response({'success': 'Синхронизация(1) картинок прошла успешно'})
     except Exception as e:
@@ -122,7 +122,7 @@ def syncImagesByIds(ids: list):
                 if not fileExtension:
                     continue
 
-                compressedImage = compressImage(
+                (withoutResizing, resizedImage) = compressImage(
                     response.content, fileExtension[1:])
 
                 fileName = f"{uuid4()}{fileExtension}"
@@ -131,9 +131,9 @@ def syncImagesByIds(ids: list):
                 imageInstance.imageId = imageId
                 imageInstance.priority = int(priority)
                 imageInstance.originalImage.save(
-                    fileName, ContentFile(response.content))
+                    fileName, ContentFile(withoutResizing))
                 imageInstance.compressedImage.save(
-                    fileName, ContentFile(compressedImage))
+                    fileName, ContentFile(resizedImage))
                 imageInstance.save()
             # return Response({'success': 'Синхронизация(2) картинок прошла успешно'})
     except Exception as e:
@@ -160,7 +160,7 @@ def syncImagesHard():
                 if not fileExtension:
                     continue
 
-                compressedImage = compressImage(
+                (withoutResizing, resizedImage) = compressImage(
                     response.content, fileExtension[1:])
 
                 fileName = f"{uuid4()}{fileExtension}"
@@ -169,9 +169,9 @@ def syncImagesHard():
                 imageInstance.imageId = imageId
                 imageInstance.priority = int(priority)
                 imageInstance.originalImage.save(
-                    fileName, ContentFile(response.content))
+                    fileName, ContentFile(withoutResizing))
                 imageInstance.compressedImage.save(
-                    fileName, ContentFile(compressedImage))
+                    fileName, ContentFile(resizedImage))
                 imageInstance.save()
             # return Response({'success': 'Синхронизация картинок прошла успешно'})
     except Exception as e:

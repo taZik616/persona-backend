@@ -48,7 +48,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
         if colorObj:
             return colorObj.hex
         else:
-            return ''
+            return '#000000'
 
     class Meta:
         model = ProductVariant
