@@ -22,19 +22,19 @@ def productSyncMid():
         with connection.cursor() as cursor:
             cursor.execute(
                 f"SELECT {PRODUCT_FIELDS} FROM mobper.Message2001 \
-                WHERE Price = 0 AND Parent_Message_ID = 0;"
+                WHERE Price = 0 AND Parent_Message_ID = 0 AND Subdivision_ID != 224;"
             )
             variableProducts = cursor.fetchall()
             # variableProducts = cursor.fetchmany(2)
             cursor.execute(
                 f"SELECT {PRODUCT_FIELDS} FROM mobper.Message2001 \
-                WHERE Price > 0 AND Parent_Message_ID = 0;"
+                WHERE Price > 0 AND Parent_Message_ID = 0 AND Subdivision_ID != 224;"
             )
             singleProducts = cursor.fetchall()
             # singleProducts = cursor.fetchmany(2)
             cursor.execute(
                 f"SELECT {PRODUCT_VARIANT_FIELDS} FROM mobper.Message2001 \
-                WHERE Price > 0 AND Parent_Message_ID > 0;"
+                WHERE Price > 0 AND Parent_Message_ID > 0 AND Subdivision_ID != 224;"
             )
             productVariants = cursor.fetchall()
             podklads = getPodklads()

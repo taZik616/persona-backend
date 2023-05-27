@@ -23,7 +23,7 @@ def productSyncFast():
 
             cursor.execute(
                 f"SELECT {PRODUCT_FIELDS} FROM mobper.Message2001 \
-                WHERE Price > 0 AND Parent_Message_ID = 0 AND LastUpdated >= '{lastFastSync}';"
+                WHERE Price > 0 AND Parent_Message_ID = 0 AND LastUpdated >= '{lastFastSync}' AND Subdivision_ID != 224;"
             )
             # Одиночные продукты, которые имеют только одну конфигурацию
             singleProducts = cursor.fetchall()
@@ -49,7 +49,7 @@ def productSyncFast():
 
             cursor.execute(
                 f"SELECT {PRODUCT_FIELDS} FROM mobper.Message2001 \
-                WHERE Price = 0 AND Parent_Message_ID = 0 AND LastUpdated >= '{lastFastSync}';"
+                WHERE Price = 0 AND Parent_Message_ID = 0 AND LastUpdated >= '{lastFastSync}' AND Subdivision_ID != 224;"
             )
             # Вариативные продукты, у которых есть детишки привязанные по `Parent_Message_ID`
             variableProducts = cursor.fetchall()
@@ -60,7 +60,7 @@ def productSyncFast():
                 return Response({'success': 'Синхронизация(1) продуктов прошла успешно'})
             cursor.execute(
                 f"SELECT {PRODUCT_VARIANT_FIELDS} FROM mobper.Message2001 \
-                WHERE Price > 0 AND Parent_Message_ID IN ({variableProductsIds});"
+                WHERE Price > 0 AND Parent_Message_ID IN ({variableProductsIds}); AND Subdivision_ID != 224"
             )
             # Варианты вариативных продуктов
             productVariants = cursor.fetchall()
