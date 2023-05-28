@@ -76,6 +76,13 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.phoneNumber
 
 
+# class Purchase(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     amount = models.FloatField(max_digits=10, decimal_places=2)
+#     is_returned = models.BooleanField(default=False)
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+
 class BasketItem(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE)

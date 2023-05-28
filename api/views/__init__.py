@@ -1,6 +1,6 @@
 from .brands import BrandsView
 from .login import LoginView
-from .registry_send_code import RegistrySendCodeView
+from .registry_send_code import RegistrySendCodeView, RegistryResendCodeView
 from .personal_info import PersonalInfoView
 from .change_password import ChangePasswordView
 from .recovery_password import RecoveryPasswordConfirmView, RecoveryPasswordSendView
@@ -11,3 +11,4 @@ from .favorites import FavoritesView
 from .basket import BasketView
 from .helpful_info import HelpfulInfoView
 from .main_content import MainContentView
+from .sizes_page import SizesPageView

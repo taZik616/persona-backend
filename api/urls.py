@@ -10,6 +10,7 @@ sync_urls = [
     path('categories', sync.syncCategories),
     path('images', sync.syncImages),
     path('colors', sync.syncColors),
+    path('sizes-page', sync.syncSizesPage),
 ]
 
 urlpatterns = [
@@ -20,8 +21,10 @@ urlpatterns = [
     path('favorites', views.FavoritesView.as_view()),
     path('basket', views.BasketView.as_view()),
     path('main-content', views.MainContentView),
+    path('sizes-page', views.SizesPageView.as_view()),
     path('login', views.LoginView),
     path('registry-send-code', views.RegistrySendCodeView),
+    path('registry-resend-code', views.RegistryResendCodeView),
     path('personal-info', views.PersonalInfoView.as_view()),
     path('change-password', views.ChangePasswordView),
     path('recovery-password-send', views.RecoveryPasswordSendView),

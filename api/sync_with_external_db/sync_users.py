@@ -18,7 +18,7 @@ def syncUsersTask():
                 userId = int(row[0])
                 lang = row[1]
                 md5pass = row[2]
-                phoneNumber = row[3]
+                phoneNumber:str = row[3]
                 fullName = row[4]
                 email = row[5]
                 dob = row[6]
@@ -28,20 +28,23 @@ def syncUsersTask():
                 firstName = name_parts[0] if len(name_parts) > 0 else ""
                 lastName = name_parts[1] if len(name_parts) > 1 else ""
 
-                userData = {
-                    'userId': userId,
-                    'language': lang or '',
-                    'md5password': md5pass,
-                    'phoneNumber': phoneNumber,
-                    'firstName': firstName,
-                    'lastName': lastName,
-                    'email': email or '',
-                    'birthday': dob or '',
-                    'is_staff': is_staff,
-                    'is_superuser': is_staff,
-                }
+                if phoneNumber.startswith('7'):
+                    phoneNumber=f"+{phoneNumber}"
 
-                User.objects.update_or_create(**userData)
+                    userData = {
+                        'userId': userId,
+                        'language': lang or '',
+                        'md5password': md5pass,
+                        'phoneNumber': phoneNumber,
+                        'firstName': firstName,
+                        'lastName': lastName,
+                        'email': email or '',
+                        'birthday': dob or '',
+                        'is_staff': is_staff,
+                        'is_superuser': is_staff,
+                    }
+
+                    User.objects.update_or_create(**userData)
 
         return Response({'success': 'Синхронизация прошла успешно'})
     except:
