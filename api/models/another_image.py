@@ -6,8 +6,6 @@ from django.core.files.storage import default_storage
 
 
 class AnotherImage(models.Model):
-    imageId = models.CharField(default='', max_length=100)
-    name = models.CharField(default='', max_length=100, blank=True)
     image = models.ImageField(default=None, upload_to='another-images/')
 
     class Meta:
@@ -15,8 +13,8 @@ class AnotherImage(models.Model):
         verbose_name_plural = 'Картинки'
 
     def __str__(self):
-        return self.name if self.name else self.imageId
-
+        return str(self.image).replace('another-images/', '')
+    
 
 @receiver(pre_delete, sender=AnotherImage)
 def deleteImage(sender, instance, **kwargs):
@@ -34,5 +32,5 @@ def deletePreviousImage(sender, instance, **kwargs):
         except sender.DoesNotExist:
             return
         if old_instance.image != instance.image:
-            if old_instance.categoryPreviewImage:
+            if old_instance.image:
                 default_storage.delete(old_instance.image.path)
