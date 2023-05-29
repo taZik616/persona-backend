@@ -24,8 +24,8 @@ class MainContentSerializer(serializers.ModelSerializer):
                     itemId = f"{instance.gender}-{index}"
                     match contentPart.type:
                         case 'CategoriesList':
-                            category = Category.objects.filter(categoryId=item['categoryId']).first()
-                            productsByCategory = Product.objects.filter(subcategoryId=item['categoryId']).order_by('?')
+                            category = Category.objects.filter(categoryId=item['subcategoryId']).first()
+                            productsByCategory = Product.objects.filter(subcategoryId=item['subcategoryId']).order_by('?')
                             for product in productsByCategory:
                                 prodImage = ProductImage.objects.filter(imageId=product.productId).first()
                                 if prodImage:
@@ -34,7 +34,7 @@ class MainContentSerializer(serializers.ModelSerializer):
                                         "category": CategorySerializer(category, context={'request': request}).data,
                                         "imgUri": request.build_absolute_uri(prodImage.compressedImage.url),
                                         "queryFilters": {
-                                            'categoryId': item['categoryId'],
+                                            'subcategoryId': item['subcategoryId'],
                                             **item.get('queryFilters', {})
                                         }
                                     })

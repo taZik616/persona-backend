@@ -9,7 +9,7 @@ from api.serializers import MainContentSerializer
 @api_view(['GET'])
 def MainContentView(request):
     try:
-        gender = request.data.get('gender')
+        gender = request.GET.get('gender')
         if not gender:
             return Response({"error": 'Укажите в запросе поле gender'}, status=400)
         if gender != 'men' and gender != 'women':

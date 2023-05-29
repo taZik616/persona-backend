@@ -7,7 +7,10 @@ from os import path, remove
 
 class Product(models.Model):
     productId = models.CharField(
-        unique=True, max_length=100, primary_key=True, blank=False, null=False)
+        db_index=True, unique=True,
+        max_length=100, primary_key=True,
+        blank=False, null=False
+    )
     subcategoryId = models.CharField(
         default='', max_length=20, blank=False, null=False)
     categoryId = models.CharField(
@@ -64,7 +67,7 @@ class ProductVariant(models.Model):
 
 
 class ProductImage(models.Model):
-    imageId = models.CharField(default='', max_length=100)
+    imageId = models.CharField(db_index=True, default='', max_length=100)
     priority = models.IntegerField()
     compressedImage = models.ImageField(upload_to='multifields-compressed/')
     originalImage = models.ImageField(upload_to='multifields/')

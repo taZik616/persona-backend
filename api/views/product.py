@@ -34,6 +34,8 @@ class ProductListView(ListAPIView):
             'brand').filter(isAvailable=True)
         productIds = self.request.GET.get('productId')
         gender = self.request.GET.get('gender')
+        withImages = ProductImage.objects.values_list('imageId', flat=True)
+        items = items.filter(productId__in=withImages)
         if gender == 'men' or gender == 'women':
             categoryIdsByGender = Category.objects.filter(
                 level=CategoryLevel.CATEGORY,
