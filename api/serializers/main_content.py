@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import MainContent, MainSwiperImage, OtherContent, Brand, Product, ProductImage, Category
+from ..models import MainContent, MainSwiperImage, Brand, Product, ProductImage, Category
 from . import CategorySerializer, BrandSerializer
 
 class MainSwiperImageSerializer(serializers.ModelSerializer):
@@ -20,7 +20,8 @@ class MainContentSerializer(serializers.ModelSerializer):
         try:
             for contentPart in rawContent:
                 preparedItems = []
-                for item in contentPart.items:
+                for index, item in enumerate(contentPart.items):
+                    itemId = f"{instance.gender}-{index}"
                     match contentPart.type:
                         case 'CategoriesList':
                             category = Category.objects.filter(categoryId=item['categoryId']).first()
@@ -29,6 +30,7 @@ class MainContentSerializer(serializers.ModelSerializer):
                                 prodImage = ProductImage.objects.filter(imageId=product.productId).first()
                                 if prodImage:
                                     preparedItems.append({
+                                        "id": itemId,
                                         "category": CategorySerializer(category, context={'request': request}).data,
                                         "imgUri": request.build_absolute_uri(prodImage.compressedImage.url),
                                         "queryFilters": {
@@ -40,6 +42,7 @@ class MainContentSerializer(serializers.ModelSerializer):
                         case 'BrandsSwiper':
                             brand = Brand.objects.filter(brandId=item['brandId']).first()
                             preparedItems.append({
+                                "id": itemId,
                                 "brand": BrandSerializer(brand, context={'request': request}).data,
                                 "imgUri": item['imgUri'],
                                 "queryFilters": {
@@ -54,6 +57,7 @@ class MainContentSerializer(serializers.ModelSerializer):
                                 prodImage = ProductImage.objects.filter(imageId=product.productId).first()
                                 if prodImage:
                                     preparedItems.append({
+                                        "id": itemId,
                                         "brand": BrandSerializer(brand, context={'request': request}).data,
                                         "imgUri": request.build_absolute_uri(prodImage.compressedImage.url),
                                         "queryFilters": {
@@ -64,9 +68,9 @@ class MainContentSerializer(serializers.ModelSerializer):
                                     break
 
                         case 'FashionSwiper':
-                            preparedItems.append(item)
+                            preparedItems.append({"id": itemId, **item})
                         case 'FashionList':
-                            preparedItems.append(item)
+                            preparedItems.append({"id": itemId, **item})
 
                 content.append({
                     "type": contentPart.type,
