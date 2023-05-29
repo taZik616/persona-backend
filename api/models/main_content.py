@@ -13,41 +13,40 @@ class MainSwiperImage(models.Model):
         verbose_name_plural = '2.2. Картинки для свайпера'
 
 
+def defaultItemsValue():
+    return []
+
 class OtherContent(models.Model):
     type = models.CharField(max_length=200, choices=MAIN_CONTENTS)
     title = models.CharField(max_length=100)
     # Я без понятия что еще юзать если не джсон
-    items = models.JSONField(help_text='''
+    items = models.JSONField(default=defaultItemsValue, help_text='''
+queryFilters - параметры для дополнительной настройки запроса product
+Например: search, isNew, subcategoryId, categoryId, brand__brandId ...<br><br>
 # BrandsList 'Список брендов'<br>
 {
-  id: string
-  brandId: number
-  imgUri: string
-  logoUri: string
+  brandId: string,
+  queryFilters?: { ... }
 }<br><br>
 # BrandsSwiper 'Свайпер брендов'<br>
 {
-  id: string
-  brandId: number
-  imgUri: string
+  brandId: string,
+  imgUri: string,
+  queryFilters?: { ... }
 }<br><br>
 # CategoriesList 'Список категорий'<br>
 {
-  id: string
-  categoryId: number
-  imgUri: string
-  name: string
+  categoryId: number,
+  queryFilters?: { ... }
 }<br><br>
-# FashionList 'Список товаров'<br>
+# FashionList 'Список образов'<br>
 {
-  id: string
-  productIds: number[]
+  productIds: string[],
   imgUri: string
 }<br><br>
-# FashionSwiper 'Свайпер товаров'<br>
+# FashionSwiper 'Свайпер образов'<br>
 {
-  id: string
-  productIds: number[]
+  productIds: string[],
   imgUri: string
 }
 ''')

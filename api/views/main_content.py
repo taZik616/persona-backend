@@ -17,5 +17,6 @@ def MainContentView(request):
         content = MainContent.objects.get(gender=gender, isInactive=False)
 
         return Response(MainContentSerializer(content, context={'request': request}).data)
-    except:
+    except Exception as e:
+        print(str(e))
         return Response({"error": 'Не удалось вернуть контент главной страницы'}, status=400)

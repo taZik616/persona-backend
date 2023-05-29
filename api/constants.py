@@ -6,7 +6,7 @@ GENDERS = (
 MAIN_CONTENTS = (
     ('CategoriesList', 'Список категорий'),
     ('BrandsSwiper', 'Свайпер брендов'),
-    ('BrandsList', 'Слайдер брендов'),
-    ('FashionSwiper', 'Свайпер товаров'),
-    ('FashionList', 'Слайдер товаров'),
+    ('BrandsList', 'Список брендов'),
+    ('FashionSwiper', 'Свайпер образов'),
+    ('FashionList', 'Список образов'),
 )
