@@ -28,6 +28,7 @@ class Product(models.Model):
         default='', max_length=1000, blank=False, null=False)
 
     priceGroup = models.CharField(default='', max_length=200)
+    discountPercent = models.IntegerField(default=0)
 
     isAvailable = models.BooleanField(blank=False, null=False)
     isNew = models.BooleanField(blank=False, null=False)
@@ -60,6 +61,7 @@ class ProductVariant(models.Model):
     price = models.FloatField(default=0.0, blank=True, null=True)
     isAvailable = models.BooleanField(blank=True, null=True)
     priceGroup = models.CharField(default='', max_length=200)
+    discountPercent = models.IntegerField(default=0)
 
     class Meta:
         verbose_name = 'Вариант продукта'

@@ -24,6 +24,11 @@ def prepareFields(row: tuple, isSingle: bool = False, podklads: dict = {}, sosta
         podklad, sostav, collection, lastUpdate = row
     podklad = podklads.get(podklad or '', '')
     sostav = sostavs.get(sostav or '', '')
+    discount = re.search(r"\d+%", priceGroup)
+    if discount:
+        discount = int(discount.strip("%"))
+    else: 
+        discount =  0
 
     categoryId = Category.objects.get(categoryId=subcategoryId).parentId
     brand = getBrandByName(brandName)
@@ -47,6 +52,7 @@ def prepareFields(row: tuple, isSingle: bool = False, podklads: dict = {}, sosta
             'country': country or '',
             'podklad': podklad,
             'sostav': sostav,
+            'discountPercent': discount
         },
         'variantForSingleProduct': {
             'size': size,
@@ -60,6 +66,11 @@ PRODUCT_VARIANT_FIELDS = 'price, Message_ID, Parent_Message_ID, size, color, sto
 
 def prepareVariantFields(row: tuple):
     price, uniqueId, parentId, size, color, stockCount, priceGroup = row
+    discount = re.search(r"\d+%", priceGroup)
+    if discount:
+        discount = int(discount.strip("%"))
+    else: 
+        discount =  0
     return {
         'uniqueId': uniqueId,
         'price': price,
@@ -67,6 +78,7 @@ def prepareVariantFields(row: tuple):
         'size': size,
         'color': color,
         'isAvailable': bool(stockCount),
+        'discountPercent': discount
     }
 
 

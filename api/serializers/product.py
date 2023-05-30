@@ -24,7 +24,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('productId', 'productName', 'price', 'isAvailable', 'gender',
+        fields = ('productId', 'productName', 'price', 'isAvailable', 'gender', 'discountPercent',
                   'priceGroup', 'collection', 'brand', 'images', 'onlyOneVariant')
 
     def to_representation(self, instance):
@@ -54,7 +54,8 @@ class ProductVariantSerializer(serializers.ModelSerializer):
         model = ProductVariant
         fields = (
             'size', 'color', 'colorHex',
-            'uniqueId', 'price', 'isAvailable'
+            'uniqueId', 'price', 'isAvailable',
+            'discountPercent'
         )
 
 
@@ -77,5 +78,5 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             'productId', 'productName', 'price', 'priceGroup', 'gender',
             'onlyOneVariant', 'collection', 'isAvailable', 'description',
             'manufacturer', 'country', 'podklad', 'sostav', 
-            'brand', 'images', 'variants',
+            'brand', 'images', 'variants', 'discountPercent'
         )
