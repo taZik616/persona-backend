@@ -7,7 +7,7 @@ from django.core.cache import cache
 from datetime import datetime
 from pytz import timezone
 from celery import shared_task
-
+import re
 
 @shared_task
 def productSyncHard():
@@ -76,6 +76,12 @@ def productSyncHard():
                     if not product.price and varFields['isAvailable']:
                         product.price = varFields['price']
                         product.priceGroup = varFields['priceGroup']
+                        discount = re.search(r"\d+%", varFields['priceGroup']) if varFields['priceGroup'] else ''
+                        if discount:
+                            discount = int(discount.group().strip("%"))
+                        else: 
+                            discount = 0
+                        product.discountPercent = discount
                         product.isAvailable = True
                         product.save()
                     ProductVariant.objects.update_or_create(
