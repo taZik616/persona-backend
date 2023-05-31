@@ -23,6 +23,7 @@ urlpatterns = [
     path('main-content', views.MainContentView),
     path('sizes-page', views.SizesPageView.as_view()),
     path('login', views.LoginView),
+    path('might-be-interested', views.MightBeInterestedView.as_view()),
     path('registry-send-code', views.RegistrySendCodeView),
     path('registry-resend-code', views.RegistryResendCodeView),
     path('personal-info', views.PersonalInfoView.as_view()),
@@ -32,5 +33,6 @@ urlpatterns = [
     path('sync/', include(sync_urls)),
     path('info/<str:infoName>', views.HelpfulInfoView.as_view()),
     path('subcategories-bind-random-product',
-         views.subcategoriesBindRandomProduct)
+         views.subcategoriesBindRandomProduct),
+    path('brands-gender-separate', views.brandsGenderSeparate),
 ]

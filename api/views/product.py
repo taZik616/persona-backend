@@ -1,3 +1,4 @@
+from api.utils.split_string import splitString
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 
@@ -6,7 +7,6 @@ from api.serializers import ProductSerializer, ProductDetailSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
-
 
 class ProductPagination(PageNumberPagination):
     page_size = 30
@@ -21,7 +21,7 @@ class ProductListView(ListAPIView):
                        filters.SearchFilter, DjangoFilterBackend]
     ordering_fields = ['price', 'lastUpdate']
     filterset_fields = [
-        'isNew', 'subcategoryId', 'categoryId', 'brand__brandId', 'priceGroup'  # 'productId',
+        'isNew', 'subcategoryId', 'categoryId', 'priceGroup'  # 'productId',
     ]
     ordering = ['-lastUpdate']
     search_fields = [
@@ -34,8 +34,15 @@ class ProductListView(ListAPIView):
             'brand').filter(isAvailable=True)
         productIds = self.request.GET.get('productId')
         gender = self.request.GET.get('gender')
+        brandIds = self.request.GET.get('brandIds')
+
         withImages = ProductImage.objects.values_list('imageId', flat=True)
         items = items.filter(productId__in=withImages)
+
+        if brandIds:
+            brandIds = splitString(brandIds)
+            items = items.filter(brand__brandId__in=brandIds)
+
         if gender == 'men' or gender == 'women':
             categoryIdsByGender = Category.objects.filter(
                 level=CategoryLevel.CATEGORY,
@@ -52,11 +59,15 @@ class ProductListView(ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         page = self.paginate_queryset(queryset)
+        availableSizes = ProductVariant.objects.filter(product__in=queryset).values_list('size', flat=True).distinct()
 
         serializer = self.get_serializer(page, many=True)
         return Response({
             'count': queryset.count(),
-            'products': serializer.data
+            'products': serializer.data,
+            'filters': {
+                'sizes': availableSizes
+            }
         })
 
 

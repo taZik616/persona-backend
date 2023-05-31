@@ -1,5 +1,5 @@
 from django.db import models
-from api.constants import GENDERS
+from api.constants import BRAND_GENDERS
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete, pre_save
 from os import path, remove
@@ -15,7 +15,7 @@ class Brand(models.Model):
     description = models.CharField(default='', max_length=5000, blank=True)
     keywords = models.TextField(default='', max_length=20000, blank=True)
     gender = models.CharField(
-        choices=GENDERS, max_length=20, blank=False, null=False)
+        choices=BRAND_GENDERS, max_length=20, blank=False, null=False)
     isTop = models.BooleanField(default=False, blank=True)
 
     class Meta:

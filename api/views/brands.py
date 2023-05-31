@@ -31,7 +31,7 @@ class BrandsView(APIView):
                     if gender != 'men' and gender != 'women':
                         return Response({'error': GENDER_MUST_BE}, status=400)
 
-                    queryset = queryset.filter(gender=gender)
+                    queryset = queryset.filter(gender__in=[gender, 'both'])
                 serialized_data = BrandSerializer(queryset, many=True, context={'request': request}).data
                 return Response(serialized_data)
             except:
