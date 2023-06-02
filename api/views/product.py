@@ -35,6 +35,7 @@ class ProductListView(ListAPIView):
         productIds = self.request.GET.get('productId')
         gender = self.request.GET.get('gender')
         brandIds = self.request.GET.get('brandIds')
+        sizes = self.request.GET.get('sizes')
 
         withImages = ProductImage.objects.values_list('imageId', flat=True)
         items = items.filter(productId__in=withImages)
@@ -50,10 +51,11 @@ class ProductListView(ListAPIView):
             ).values_list('categoryId', flat=True)
             categoryIdsByGender = [str(catId) for catId in categoryIdsByGender]
             items = items.filter(categoryId__in=categoryIdsByGender)
-
+        if sizes:
+            items = items.filter(productvariant__size__in=splitString(sizes))
         # Фильтруем по значениям `productId`
         if productIds:
-            items = items.filter(productId__in=productIds.split(','))
+            items = items.filter(productId__in=splitString(productIds))
         return self.filter_queryset(items)
 
     def list(self, request, *args, **kwargs):
