@@ -29,6 +29,6 @@ def ChangePasswordView(request):
             )
             # Это не просто так тут стоит, set_password не сохраняет изменения экземпляра
             user.save()
-            return Response({'success': 'Пароль успешно изменен!'}, status=400)
+            return Response({'success': 'Пароль успешно изменен!'})
     except:
         return Response({"error": 'Не удалось сменить пароль'}, status=400)

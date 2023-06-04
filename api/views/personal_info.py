@@ -35,7 +35,7 @@ class PersonalInfoView(APIView):
                     fullName = f"{user.firstName} {user.lastName}"
 
                     cursor.execute(f"""
-                    UPDATE `User` SET `FullName` = '{fullName}', `Email` = '{user.email}', `Birthday` = {f'{user.birthday}' if user.birthday else 'NULL'} WHERE `User_ID` = {user.userId};
+                    UPDATE `User` SET `FullName` = '{fullName}', `Email` = '{user.email if user.email else 'NULL'}', `Birthday` = '{user.birthday if user.birthday else 'NULL'}' WHERE `User_ID` = {user.userId};
                     """)
 
                     user.save()
@@ -43,7 +43,8 @@ class PersonalInfoView(APIView):
             else:
                 error = list(serializedUser.errors.values())[0][0]
                 return Response({'error': translateError(error)}, status=400)
-        except:
+        except Exception as e:
+            print(e)
             return Response({'error': 'Не удалось обновить пользователя'}, status=400)
 
     def delete(self, request):
