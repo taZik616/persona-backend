@@ -19,10 +19,10 @@ def RecoveryPasswordSendView(request):
             return Response({"error": res.get('error')}, status=400)
 
         formattedPhoneNumber = res.get('formattedPhoneNumber')
-        try:
-            User.objects.get(phoneNumber=formattedPhoneNumber)
-        except:
-            return Response({"error": 'Такого пользователя не существует'})
+
+        user = User.objects.filter(phoneNumber=formattedPhoneNumber).first()
+        if not user:
+            return Response({"error": 'Такого пользователя не существует'}, status=400)
 
         codeSendRes = sendCodeToPhone(formattedPhoneNumber)
 
@@ -39,22 +39,22 @@ def RecoveryPasswordSendView(request):
         return Response({
             "success": f"На номер '{formattedPhoneNumber}' был отправлен пароль, у вас есть 6 часов чтобы подтвердить восстановление"
         })
-    except:
+    except Exception as e:
+        print(str(e))
         return Response({
             "error": "Не удалось запустить восстановление"
         }, status=400)
 
 
 @api_view(['POST'])
-def RecoveryPasswordConfirmView(request):
+def RecoveryPasswordCheckView(request):
     try:
         phoneNumber = request.data.get('phoneNumber')
         supposedCode = request.data.get('supposedCode')
-        newPassword = request.data.get('newPassword')
 
-        if not phoneNumber or not supposedCode or not newPassword:
+        if not phoneNumber or not supposedCode:
             return Response({
-                "error": "Для завершения восстановления, вам нужно указать: номер телефона, предполагаемый код, новый пароль"
+                "error": "Для завершения проверки, вам нужно указать: номер телефона, предполагаемый код"
             }, status=400)
 
         res = validateAndFormatPhoneNumber(phoneNumber)
@@ -62,11 +62,6 @@ def RecoveryPasswordConfirmView(request):
             return Response({"error": res.get('error')}, status=400)
 
         formattedPhoneNumber = res.get('formattedPhoneNumber')
-        user: User
-        try:
-            user = User.objects.get(phoneNumber=formattedPhoneNumber)
-        except:
-            return Response({"error": 'Такого пользователя не существует'})
 
         state = cache.get(f'rec-pass-{formattedPhoneNumber}')
         if state is None:
@@ -76,6 +71,42 @@ def RecoveryPasswordConfirmView(request):
         supposedCodeMd5 = specialEncodePassword(supposedCode)
 
         if codeMd5 == supposedCodeMd5:
+            return Response({"success": 'Код прошел проверку'})
+        else:
+            return Response({"error": 'Введен не правильный код подтверждения'}, status=400)
+    except:
+        return Response({"error": 'Не удалось выполнить проверку'}, status=400)
+
+@api_view(['POST'])
+def RecoveryPasswordCompleteView(request):
+    try:
+        phoneNumber = request.data.get('phoneNumber')
+        supposedCode = request.data.get('supposedCode')
+        newPassword = request.data.get('newPassword')
+        
+        if not phoneNumber or not supposedCode or not newPassword:
+            return Response({
+                "error": "Для завершения восстановления, вам нужно указать: номер телефона, предполагаемый код, новый пароль"
+            }, status=400)
+
+        res = validateAndFormatPhoneNumber(phoneNumber)
+        if not res.get('success'):
+            return Response({"error": res.get('error')}, status=400)
+
+        formattedPhoneNumber = res.get('formattedPhoneNumber')
+
+        state = cache.get(f'rec-pass-{formattedPhoneNumber}')
+        if state is None:
+            return Response({"error": 'Сначала нужно начать процесс восстановления'}, status=400)
+        
+        codeMd5 = state.get('codeMd5')
+        supposedCodeMd5 = specialEncodePassword(supposedCode)
+
+        if codeMd5 == supposedCodeMd5:
+            user = User.objects.filter(phoneNumber=formattedPhoneNumber).first()
+            if not user:
+                return Response({"error": 'Такого пользователя не существует'}, status=400)
+
             connection = connectToPersonaDB()
             user.set_password(newPassword)
 
@@ -85,8 +116,9 @@ def RecoveryPasswordConfirmView(request):
                 )
                 user.save()
                 cache.delete(f'rec-pass-{formattedPhoneNumber}')
-                return Response({"success": 'Пароль аккаунта был успешно восстановлен'}, status=400)
+                return Response({"success": 'Пароль аккаунта был успешно восстановлен'})
         else:
             return Response({"error": 'Введен не правильный код подтверждения'}, status=400)
-    except:
+    except Exception as e:
+        print(e)
         return Response({"error": 'Не удалось завершить восстановление пароля'}, status=400)
