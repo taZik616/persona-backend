@@ -11,7 +11,7 @@ class HelpfulInfoView(APIView):
         try:
             content = cache.get(f'helpful-info-{infoName}')
             if not content:
-                return Response({'error': 'Информация не найдена'})
+                return Response({'error': 'Информация не найдена'}, status=404)
 
             return Response({'data': content})
         except:
