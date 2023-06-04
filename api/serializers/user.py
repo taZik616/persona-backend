@@ -22,7 +22,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
         instance.subEmail = validated_data.get('subEmail', instance.subEmail)
         instance.subSms = validated_data.get('subSms', instance.subSms)
         instance.subPush = validated_data.get('subPush', instance.subPush)
-        # instance.favorites = validated_data.get('favorites', instance.favorites)
         return instance
 
 
