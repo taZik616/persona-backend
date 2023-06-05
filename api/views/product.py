@@ -32,6 +32,8 @@ class ProductListView(ListAPIView):
     def get_queryset(self):
         items = Product.objects.select_related(
             'brand').filter(isAvailable=True)
+        items = self.filter_queryset(items)
+
         productIds = self.request.GET.get('productId')
         gender = self.request.GET.get('gender')
         brandIds = self.request.GET.get('brandIds')
@@ -52,23 +54,27 @@ class ProductListView(ListAPIView):
             categoryIdsByGender = [str(catId) for catId in categoryIdsByGender]
             items = items.filter(categoryId__in=categoryIdsByGender)
         if sizes:
-            items = items.filter(productvariant__size__in=splitString(sizes))
+            items = items.filter(productvariant__size__in=splitString(sizes)).distinct()
         # Фильтруем по значениям `productId`
         if productIds:
             items = items.filter(productId__in=splitString(productIds))
-        return self.filter_queryset(items)
+        
+        availableSizes = ProductVariant.objects.filter(product__in=items).values_list('size', flat=True).distinct()
+        return {
+            'page': self.paginate_queryset(items),
+            'sizes': availableSizes,
+            'count': items.count()
+        }
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        page = self.paginate_queryset(queryset)
-        availableSizes = ProductVariant.objects.filter(product__in=queryset).values_list('size', flat=True).distinct()
 
-        serializer = self.get_serializer(page, many=True)
+        serializer = self.get_serializer(queryset['page'], many=True)
         return Response({
-            'count': queryset.count(),
+            'count': queryset['count'],
             'products': serializer.data,
             'filters': {
-                'sizes': availableSizes
+                'sizes': queryset['sizes']
             }
         })
 
