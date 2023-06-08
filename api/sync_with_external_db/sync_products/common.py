@@ -14,14 +14,15 @@ def getBrandByName(name):
 
 
 PRODUCT_FIELDS = 'caption, price, Subdivision_ID, Message_ID, brand, size, color, \
-    stock, new, ncKeywords, priceGroup, manufacturer, country, podklad, sostav, collection, LastUpdated'
+    stock, new, ncKeywords, priceGroup, manufacturer, country, podklad, sostav, collection, LastUpdated, code, Checked'
 
 
 def prepareFields(row: tuple, isSingle: bool = False, podklads: dict = {}, sostavs: dict = {}):
     productName, price, subcategoryId, uniqueId, \
         brandName, size, color, stockCount, isNew, \
         keywords, priceGroup, manufacturer, country, \
-        podklad, sostav, collection, lastUpdate = row
+        podklad, sostav, collection, lastUpdate, article, \
+        checked = row
     podklad = podklads.get(podklad or '', '')
     sostav = sostavs.get(sostav or '', '')
     discount = re.search(r"\d+%", priceGroup) if priceGroup else ''
@@ -52,7 +53,9 @@ def prepareFields(row: tuple, isSingle: bool = False, podklads: dict = {}, sosta
             'country': country or '',
             'podklad': podklad,
             'sostav': sostav,
-            'discountPercent': discount
+            'discountPercent': discount,
+            'article': article or '',
+            'checked': checked
         },
         'variantForSingleProduct': {
             'size': size,

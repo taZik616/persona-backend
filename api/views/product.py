@@ -21,17 +21,17 @@ class ProductListView(ListAPIView):
                        filters.SearchFilter, DjangoFilterBackend]
     ordering_fields = ['price', 'lastUpdate']
     filterset_fields = [
-        'isNew', 'subcategoryId', 'categoryId', 'priceGroup'  # 'productId',
+        'isNew', 'subcategoryId', 'categoryId', 'priceGroup'
     ]
     ordering = ['-lastUpdate']
     search_fields = [
-        'productName', 'collection', 'description',
+        'article', 'productName', 'description',
         'keywords', 'brand__name', 'brand__keywords'
     ]
 
     def get_queryset(self):
         items = Product.objects.select_related(
-            'brand').filter(isAvailable=True)
+            'brand').filter(isAvailable=True, checked=True)
         items = self.filter_queryset(items)
 
         productIds = self.request.GET.get('productId')

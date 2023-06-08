@@ -29,9 +29,11 @@ class Product(models.Model):
 
     priceGroup = models.CharField(default='', max_length=200)
     discountPercent = models.IntegerField(default=0)
+    article = models.CharField(db_index=True, max_length=300)
 
     isAvailable = models.BooleanField(blank=False, null=False)
     isNew = models.BooleanField(blank=False, null=False)
+    checked = models.BooleanField(blank=False, null=False)
     lastUpdate = models.DateTimeField()
 
     # Производитель

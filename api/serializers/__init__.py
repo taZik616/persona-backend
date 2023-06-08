@@ -4,3 +4,4 @@ from .product import ProductSerializer, ProductImageSerializer, ProductDetailSer
 from .category import CategorySerializer
 from .main_content import MainContentSerializer, MainSwiperImageSerializer
 from .color import ColorSerializer
+from .collection import CollectionSerializer

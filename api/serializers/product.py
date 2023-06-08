@@ -1,7 +1,9 @@
+from api.utils import splitString
 from rest_framework import serializers
 
-from api.models import Product, ProductImage, ProductVariant, Color, Category, CategoryLevel
-from api.serializers import BrandSerializer
+from api.models import Product, ProductImage, ProductVariant, Color, Category, CategoryLevel, Collection
+from api.serializers.collection import CollectionSerializer
+from api.serializers.brand import BrandSerializer
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -14,6 +16,7 @@ class ProductSerializer(serializers.ModelSerializer):
     brand = BrandSerializer()
     images = ProductImageSerializer(many=True, read_only=True)
     gender = serializers.SerializerMethodField()
+    collections = serializers.SerializerMethodField()
 
     def get_gender(self, instance):
         gender = Category.objects.filter(
@@ -21,11 +24,19 @@ class ProductSerializer(serializers.ModelSerializer):
             categoryId=instance.categoryId
         ).first().gender
         return gender if gender  else ''
+    
+    def get_collections(self, instance):
+        collectionIds = splitString(instance.collection)
+        collections = Collection.objects.filter(collectionId__in=collectionIds)
+        
+        return CollectionSerializer(collections, many=True).data
 
     class Meta:
         model = Product
-        fields = ('productId', 'productName', 'price', 'isAvailable', 'gender', 'discountPercent',
-                  'priceGroup', 'collection', 'brand', 'images', 'onlyOneVariant')
+        fields = (
+            'productId', 'productName', 'price', 'isAvailable', 'gender', 'discountPercent',
+            'priceGroup', 'collections', 'brand', 'images', 'onlyOneVariant', 'article'
+        )
 
     def to_representation(self, instance):
         imageIds = instance.productId
@@ -64,6 +75,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     variants = ProductVariantSerializer(many=True, read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
     gender = serializers.SerializerMethodField()
+    collections = serializers.SerializerMethodField()
 
     def get_gender(self, instance):
         gender = Category.objects.filter(
@@ -72,11 +84,17 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         ).first().gender
         return gender if gender  else ''
 
+    def get_collections(self, instance):
+        collectionIds = splitString(instance.collection)
+        collections = Collection.objects.filter(collectionId__in=collectionIds)
+        
+        return CollectionSerializer(collections, many=True).data
+
     class Meta:
         model = Product
         fields = (
             'productId', 'productName', 'price', 'priceGroup', 'gender',
-            'onlyOneVariant', 'collection', 'isAvailable', 'description',
+            'onlyOneVariant', 'collections', 'isAvailable', 'description',
             'manufacturer', 'country', 'podklad', 'sostav', 
-            'brand', 'images', 'variants', 'discountPercent'
+            'brand', 'images', 'variants', 'discountPercent', 'article'
         )

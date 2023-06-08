@@ -11,6 +11,7 @@ sync_urls = [
     path('images', sync.syncImages),
     path('colors', sync.syncColors),
     path('sizes-page', sync.syncSizesPage),
+    path('current-season-collection', sync.syncCurrentSeasonCollection),
 ]
 
 urlpatterns = [

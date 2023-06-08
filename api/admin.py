@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from api.models import Brand, MainContent, AnotherImage, User, \
     Category, ProductVariant, Product, ProductImage, \
-    FavoriteItem, BasketItem, OtherContent, MainSwiperImage, Color
+    FavoriteItem, BasketItem, OtherContent, MainSwiperImage, Color, Collection
 
 admin.site.register(User)
 admin.site.register(Brand)
@@ -13,6 +13,7 @@ admin.site.register(OtherContent)
 admin.site.register(ProductImage)
 admin.site.register(FavoriteItem)
 admin.site.register(BasketItem)
+admin.site.register(Collection)
 
 
 @admin.register(Color)
@@ -33,7 +34,7 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['productName', 'price', 'lastUpdate', 'isNew', 'productId', 'brand',
-                    'categoryId', 'subcategoryId', 'isAvailable', 'onlyOneVariant']
+                    'categoryId', 'subcategoryId', 'isAvailable', 'onlyOneVariant', 'checked']
     ordering = ('-lastUpdate', '-productName')
     search_fields = ('productId', 'productName',
                      'keywords', 'price', 'description')
