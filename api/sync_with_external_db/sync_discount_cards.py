@@ -26,7 +26,7 @@ def syncDiscountCardsTask():
                         level=level,
                         defaults={
                             'discountPercent': percent,
-                            'purchaseThreshold': 100000*level,
+                            'purchaseThreshold': 100000*level if level > 1 else 0,
                             'encodedValue': value
                         }
                     )

@@ -76,6 +76,7 @@ def RegistrySendCodeView(request):
             QUERY = f"INSERT User({form}) VALUES ({values});"
 
             cursor.execute(QUERY)
+            cursor.connection.commit()
 
             return Response({
                 "success": f"На номер был отправлен пароль",
