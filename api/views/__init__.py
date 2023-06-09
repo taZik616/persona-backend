@@ -14,3 +14,4 @@ from .main_content import MainContentView
 from .sizes_page import SizesPageView
 from .might_be_interested import MightBeInterestedView
 from .brands_gender_separate import brandsGenderSeparate
+from .discount_card_info import DiscountCardInfoView

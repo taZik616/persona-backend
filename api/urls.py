@@ -23,6 +23,7 @@ urlpatterns = [
     path('favorites', views.FavoritesView.as_view()),
     path('basket', views.BasketView.as_view()),
     path('main-content', views.MainContentView),
+    path('discount-card-info', views.DiscountCardInfoView.as_view()),
     path('sizes-page', views.SizesPageView.as_view()),
     path('login', views.LoginView),
     path('might-be-interested', views.MightBeInterestedView.as_view()),
