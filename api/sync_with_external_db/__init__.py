@@ -6,3 +6,4 @@ from .sync_images import syncImages
 from .sync_colors import syncColors
 from .sync_sizes_page import syncSizesPage
 from .sync_collection import syncCurrentSeasonCollection
+from .sync_discount_cards import syncDiscountCards

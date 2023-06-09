@@ -5,6 +5,7 @@ from . import sync_with_external_db as sync
 
 sync_urls = [
     path('users', sync.syncUsers),
+    path('discount-cards', sync.syncDiscountCards),
     path('products', sync.syncProducts),
     path('brands', sync.syncBrands),
     path('categories', sync.syncCategories),
