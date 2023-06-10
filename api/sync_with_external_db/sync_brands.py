@@ -42,7 +42,7 @@ def syncBrandsTask():
                         'isTop': isTop,
                         'keywords': keywords,
                         'description': description,
-                        'gender': 'men',  # Как узнать men/women?
+                        # Затем нужно запустить разделение brands-gender-separate
                     }
                 )
                 brand.logo.save(fileName, ContentFile(response.content))

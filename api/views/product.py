@@ -32,15 +32,15 @@ class ProductListView(ListAPIView):
     def get_queryset(self):
         items = Product.objects.select_related(
             'brand').filter(isAvailable=True, checked=True)
+        
         items = self.filter_queryset(items)
+        withImages = ProductImage.objects.values_list('imageId', flat=True)
+        items = items.filter(productId__in=withImages)
 
         productIds = self.request.GET.get('productId')
         gender = self.request.GET.get('gender')
         brandIds = self.request.GET.get('brandIds')
         sizes = self.request.GET.get('sizes')
-
-        withImages = ProductImage.objects.values_list('imageId', flat=True)
-        items = items.filter(productId__in=withImages)
 
         if brandIds:
             brandIds = splitString(brandIds)

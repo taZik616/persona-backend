@@ -15,7 +15,7 @@ class Brand(models.Model):
     description = models.CharField(default='', max_length=5000, blank=True)
     keywords = models.TextField(default='', max_length=20000, blank=True)
     gender = models.CharField(
-        choices=BRAND_GENDERS, max_length=20, blank=False, null=False)
+        choices=BRAND_GENDERS, max_length=20, null=True)
     isTop = models.BooleanField(default=False, blank=True)
 
     class Meta:

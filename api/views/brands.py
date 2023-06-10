@@ -23,7 +23,7 @@ class BrandsView(APIView):
                 return Response({'error': 'Не удалось вернуть бренд'}, status=400)
         else:
             try:
-                queryset = Brand.objects.all()
+                queryset = Brand.objects.all().filter(gender__isnull=False)
                 if 'isTop' in request.data:
                     queryset = queryset.filter(isTop=request.data['isTop'])
                 if 'gender' in request.data:

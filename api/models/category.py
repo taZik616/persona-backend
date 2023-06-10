@@ -22,7 +22,7 @@ class Category(models.Model):
     level = EnumField(CategoryLevel)
     # С этого продукта будет вытянута картинка для демонстрации подкатегории
     subcategoryPreviewProduct = models.ForeignKey(
-        Product, on_delete=models.PROTECT, blank=True, null=True
+        Product, on_delete=models.PROTECT, null=True
     )
     # Эта картинка будет относиться к демонстрации категори
     categoryPreviewImage = models.ImageField(

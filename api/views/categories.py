@@ -17,6 +17,11 @@ class CategoryListView(ListAPIView):
 
     def get_queryset(self):
         items = Category.objects.all()
+        level = self.request.GET.get('level')
+        parentId = self.request.GET.get('parentId')
+
+        if (level and int(level) == CategoryLevel.SUBCATEGORY) or parentId:
+            items = items.filter(subcategoryPreviewProduct__isnull=False)
         return self.filter_queryset(items)
 
     def list(self, request, *args, **kwargs):
