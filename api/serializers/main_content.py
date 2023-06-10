@@ -46,7 +46,7 @@ class MainContentSerializer(serializers.ModelSerializer):
                                 "brand": BrandSerializer(brand, context={'request': request}).data,
                                 "imgUri": item['imgUri'],
                                 "queryFilters": {
-                                    'brand__brandId': item['brandId'],
+                                    'brandIds': item['brandId'],
                                     **item.get('queryFilters', {})
                                 }
                             })
@@ -61,7 +61,7 @@ class MainContentSerializer(serializers.ModelSerializer):
                                         "brand": BrandSerializer(brand, context={'request': request}).data,
                                         "imgUri": request.build_absolute_uri(prodImage.compressedImage.url),
                                         "queryFilters": {
-                                            'brand__brandId': item['brandId'],
+                                            'brandIds': item['brandId'],
                                             **item.get('queryFilters', {})
                                         }
                                     })
