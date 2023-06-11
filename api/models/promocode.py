@@ -7,7 +7,9 @@ class Promocode(models.Model):
 {<br>
     "discountPercent": 30,<br>
     # Если вы укажете значение discountPercent, то discountSum будет использован как максимальное значение скидки.<br>
-    "discountSum": 5000<br>
+    "discountSum": 5000,<br>
+    # Порог при котором скидка начинает действовать<br>
+    "startSumForDiscountSum": 50000<br>
 }
 ''')
     productFilters = models.JSONField(help_text='''
