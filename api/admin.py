@@ -3,7 +3,7 @@ from django.contrib import admin
 from api.models import Brand, MainContent, AnotherImage, User, \
     Category, ProductVariant, Product, ProductImage, \
     FavoriteItem, BasketItem, OtherContent, MainSwiperImage, Color, \
-    Collection, DiscountCard, DiscountCardLevel
+    Collection, DiscountCard, DiscountCardLevel, Promocode
 
 admin.site.register(User)
 admin.site.register(Brand)
@@ -17,7 +17,7 @@ admin.site.register(BasketItem)
 admin.site.register(Collection)
 admin.site.register(DiscountCard)
 admin.site.register(DiscountCardLevel)
-
+admin.site.register(Promocode)
 
 @admin.register(Color)
 class ColorAdmin(admin.ModelAdmin):

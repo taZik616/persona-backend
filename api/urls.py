@@ -22,6 +22,7 @@ urlpatterns = [
     path('products/<str:productId>', views.ProductDetailView.as_view()),
     path('favorites', views.FavoritesView.as_view()),
     path('basket', views.BasketView.as_view()),
+    path('check-promocode', views.checkPromocode),
     path('main-content', views.MainContentView),
     path('discount-card-info', views.DiscountCardInfoView.as_view()),
     path('sizes-page', views.SizesPageView.as_view()),
