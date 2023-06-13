@@ -1,12 +1,10 @@
+from api.common_error_messages import ONLY_ADMIN
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
 from django.core.cache import cache
 
 
 class HelpfulInfoView(APIView):
-    # permission_classes = [IsAdminUser]
-
     def get(self, request, infoName):
         try:
             content = cache.get(f'helpful-info-{infoName}')
@@ -18,6 +16,8 @@ class HelpfulInfoView(APIView):
             return Response({'error': 'Информация не найдена'}, status=404)
 
     def put(self, request, infoName):
+        if not request.user.is_superuser:
+            return Response({'error': ONLY_ADMIN}, status=400)
         try:
             content = request.data.get('content')
             if not content:
@@ -29,6 +29,8 @@ class HelpfulInfoView(APIView):
             return Response({'error': f'Не удалось добавить контент'}, status=400)
 
     def delete(self, request, infoName):
+        if not request.user.is_superuser:
+            return Response({'error': ONLY_ADMIN}, status=400)
         try:
             cache.delete(f'helpful-info-{infoName}')
 

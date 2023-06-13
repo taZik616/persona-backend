@@ -4,6 +4,7 @@ from api.models import User
 
 class Order(models.Model):
     orderId = models.AutoField(unique=True, db_index=True, primary_key=True)
+    orderSberId = models.CharField(max_length=255, blank=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     productsInfo = models.JSONField(blank=False)
     costumerInfo = models.JSONField(blank=False)

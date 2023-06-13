@@ -17,5 +17,5 @@ from .brands_gender_separate import brandsGenderSeparate
 from .discount_card_info import DiscountCardInfoView
 from .check_promocode import checkPromocode
 from .create_order import createOrder
-from .check_order_status import checkOrderStatus
+from .check_order_status import checkOrderStatus, updateAllOwnOrdersStatus
 

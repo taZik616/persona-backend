@@ -53,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=200, blank=True)
     birthday = models.CharField(max_length=120, default='', blank=True)
     isPhoneNumberVerified = models.BooleanField(default=False, blank=True)
-    usedPromocodes = models.ManyToManyField(Promocode, blank=True, null=True)
+    usedPromocodes = models.ManyToManyField(Promocode, blank=True)
 
     subEmail = models.BooleanField(default=False, blank=True)
     subSms = models.BooleanField(default=False, blank=True)

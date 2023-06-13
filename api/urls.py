@@ -25,6 +25,7 @@ urlpatterns = [
     path('check-promocode', views.checkPromocode),
     path('create-order', views.createOrder),
     path('check-order-status', views.checkOrderStatus),
+    path('update-all-order-statuses', views.updateAllOwnOrdersStatus),
     path('main-content', views.MainContentView),
     path('discount-card-info', views.DiscountCardInfoView.as_view()),
     path('sizes-page', views.SizesPageView.as_view()),
