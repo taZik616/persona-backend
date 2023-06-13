@@ -8,3 +8,5 @@ from .color import Color
 from .collection import Collection
 from .discount_card import DiscountCard, DiscountCardLevel
 from .promocode import Promocode
+from .order import Order
+from .server_settings import ServerSettings
