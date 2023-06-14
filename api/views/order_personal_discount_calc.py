@@ -64,7 +64,6 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
                 participatesInPromo = promoProducts.filter(productId=parentId).exists()
                 if participatesInPromo:
                     price = variant.price - variant.price / 100 * variant.discountPercent
-                    priceWithoutPersonalDiscount += price
 
                     discountPercent = promocode.benefit.get('discountPercent', 0)
                     discountSum = promocode.benefit.get('discountSum', 0)
@@ -81,6 +80,7 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
                     elif discountSum:
                         return {'error': f'Для активации кода сумма заказа должна составлять {startSumForDiscountSum} ₽'}
 
+                    priceWithoutPersonalDiscount += price
                     priceWithPersonalDiscount += price - personalDiscountInRub
                     preparedProductsData.append({
                         'product': ProductSerializer(variant.product).data,
@@ -102,7 +102,8 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
                 for variant in variants:
                     price = variant.price - variant.price / 100 * variant.discountPercent
                     personalDiscountInRub = price / 100 * discountPercent
-                    priceWithoutPersonalDiscount += price - personalDiscountInRub
+
+                    priceWithoutPersonalDiscount += price
                     priceWithPersonalDiscount += price - personalDiscountInRub
 
                     preparedProductsData.append({

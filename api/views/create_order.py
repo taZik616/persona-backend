@@ -8,20 +8,27 @@ from rest_framework.response import Response
 
 from api.serializers import UserInfoSerializer
 from api.utils import splitString, selectAllFromProducts, getServerSettings
-from api.models import ProductVariant, Order
+from api.models import ProductVariant, Order, Promocode
 from api.views.check_order_status import checkOrderStatusAndUpdateStateTask
-
+from api.views.order_personal_discount_calc import orderPersonalDiscountCalc
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def createOrder(request):
+    productVariantIds = request.data.get('productVariantIds', '')
+    promocode = request.data.get('promocode', '')
+
+    if not productVariantIds:
+        return Response({'error': 'Укажите товары которые хотите разместить в заказе'}, status=400)
+    
+    orderData = orderPersonalDiscountCalc(productVariantIds, request.user, promocode)
+
+    if orderData.get('error'):
+        return Response(orderData, status=400)
+    orderPrice = orderData['priceWithPersonalDiscount'] * 100
+    
     createdOrder: Order
     try:
-        productVariantIds = request.data.get('productVariantIds')
-
-        if not productVariantIds:
-            return Response({'error': 'Укажите товары которые хотите разместить в заказе'}, status=400)
-
         productVariantIds = splitString(productVariantIds)
         variants = ProductVariant.objects.filter(uniqueId__in=productVariantIds)
         if not variants.exists():
@@ -45,32 +52,17 @@ def createOrder(request):
             user=request.user
         )
 
-        orderPrice = 0
-
-        for item in productsData:
-            itemsCount = 1
-            price = int(item['price']) * 100
-
-            discount = re.search(r"\d+%", item['priceGroup']) if item['priceGroup'] else ''
-            if discount:
-                discount = int(discount.group().strip("%"))
-                if discount <= 100:
-                    price = price - (price / 100 * discount)
-            else: 
-                discount = 0
-
-            orderPrice += price * itemsCount
-
         deliveryCost = settings["delivery_cost_in_rub"]
         if deliveryCost:
             orderPrice += deliveryCost * 100
-        articles_list = [str(prod['code'] if prod['code'] else prod['Message_ID']) for prod in productsData]
+
+        articles = [str(prod['code'] if prod['code'] else prod['Message_ID']) for prod in productsData]
         params = {
             'userName': settings["sber_api_login"],
             'password': settings["sber_api_password"],
             'currency': 643,
             'orderNumber': createdOrder.orderId,
-            'description': f'Оплата заказа №{createdOrder.orderId} в магазине Персона. Артикулы покупаемых товаров: {", ".join(articles_list)}'[:512],
+            'description': f'Оплата заказа №{createdOrder.orderId} в магазине Персона. Артикулы покупаемых товаров: {", ".join(articles)}'[:512],
             'amount': int(orderPrice),
             'returnUrl': 'personashop://',
             'failUrl': 'personashop://'
@@ -80,6 +72,7 @@ def createOrder(request):
         data = requests.get(registerUrl, params=params, verify=False).json()
         if data.get('orderId'):
             createdOrder.orderSberId = data['orderId']
+            createdOrder.usedPromocode = Promocode.objects.filter(code=promocode).first()
             createdOrder.save()
             checkOrderStatusAndUpdateStateTask.apply_async(
                 args=[data['orderId']],
@@ -94,5 +87,3 @@ def createOrder(request):
         if createdOrder:
             createdOrder.delete()
         return Response({'error': 'При создании заказа возникла ошибка'}, status=400)
-    
-# return Response({'success': 'Получилось', 'orderId': createdOrder.orderId})

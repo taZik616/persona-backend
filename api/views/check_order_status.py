@@ -35,6 +35,9 @@ def checkOrderStatusAndUpdateStateTask(orderId):
             order.status = 'NotPaid'
             match data['OrderStatus']:
                 case 2:
+                    if order.usedPromocode:
+                        order.user.usedPromocodes.add(order.usedPromocode)
+                        order.user.save()
                     order.status = 'AlreadyPaid'
                 case 3:
                     order.status = 'AuthorizationDenied'
