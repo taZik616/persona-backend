@@ -8,7 +8,7 @@ from api.models import DiscountCard, DiscountCardLevel
 from api.utils import validateAndFormatPhoneNumber, randomCardCode, connectToPersonaDB
 import uuid
 
-@ratelimit(key='ip', rate='16/h', block=False)
+@ratelimit(key='ip', rate='20/min', block=False)
 @api_view(['POST'])
 def LoginView(request):
     """Для того чтобы получить токен нужны поля `username` и `password`"""

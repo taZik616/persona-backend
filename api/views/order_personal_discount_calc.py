@@ -9,7 +9,7 @@ from api.utils import splitString, getWomenAndMenCats
 from api.models import ProductVariant, DiscountCard, Promocode, User, Product
 
 
-def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str):
+def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str, request = None):
     try:
         if not productVariantIds:
             return {'error': 'Укажите товары для того чтобы узнать сколько составит цена со скидкой'}
@@ -83,14 +83,14 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
                     priceWithoutPersonalDiscount += price
                     priceWithPersonalDiscount += price - personalDiscountInRub
                     preparedProductsData.append({
-                        'product': ProductSerializer(variant.product).data,
+                        'product': ProductSerializer(variant.product, context={'request': request}).data,
                         'variant': ProductVariantSerializer(variant).data,
                         'personalDiscountInRub': personalDiscountInRub
                     })
                     
                 else:
                     preparedProductsData.append({
-                        'product': ProductSerializer(variant.product).data,
+                        'product': ProductSerializer(variant.product, context={'request': request}).data,
                         'variant': ProductVariantSerializer(variant).data
                     })
         else:
@@ -107,7 +107,7 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
                     priceWithPersonalDiscount += price - personalDiscountInRub
 
                     preparedProductsData.append({
-                        'product': ProductSerializer(variant.product).data,
+                        'product': ProductSerializer(variant.product, context={'request': request}).data,
                         'variant': ProductVariantSerializer(variant).data,
                         'personalDiscountInRub': personalDiscountInRub
                     })
@@ -129,7 +129,7 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
 def orderPersonalDiscountCalcView(request):
     productVariantIds = request.GET.get('productVariantIds', '')
     promocode = request.GET.get('promocode', '')
-    data = orderPersonalDiscountCalc(productVariantIds, request.user, promocode)
+    data = orderPersonalDiscountCalc(productVariantIds, request.user, promocode, request)
 
     if isinstance(data, dict) and data.get('error'):
         return Response(data, status=400)

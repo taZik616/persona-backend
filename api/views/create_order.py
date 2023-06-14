@@ -21,7 +21,7 @@ def createOrder(request):
     if not productVariantIds:
         return Response({'error': 'Укажите товары которые хотите разместить в заказе'}, status=400)
     
-    orderData = orderPersonalDiscountCalc(productVariantIds, request.user, promocode)
+    orderData = orderPersonalDiscountCalc(productVariantIds, request.user, promocode, request)
 
     if orderData.get('error'):
         return Response(orderData, status=400)
