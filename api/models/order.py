@@ -1,6 +1,7 @@
 from django.db import models
 from api.constants import ORDER_STATUS
-from api.models import User
+from api.models.user import User
+from api.models.promocode import Promocode
 
 class Order(models.Model):
     orderId = models.AutoField(unique=True, db_index=True, primary_key=True)
@@ -8,6 +9,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     productsInfo = models.JSONField(blank=False)
     costumerInfo = models.JSONField(blank=False)
+    usedPromocode = models.ForeignKey(Promocode, on_delete=models.SET_NULL, blank=True, null=True)
     status = models.CharField(max_length=50, choices=ORDER_STATUS)
 
     class Meta:

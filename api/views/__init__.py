@@ -15,7 +15,9 @@ from .sizes_page import SizesPageView
 from .might_be_interested import MightBeInterestedView
 from .brands_gender_separate import brandsGenderSeparate
 from .discount_card_info import DiscountCardInfoView
-from .check_promocode import checkPromocode
+from .check_promocode import checkPromocodeView
 from .create_order import createOrder
 from .check_order_status import checkOrderStatus, updateAllOwnOrdersStatus
+from .order_personal_discount_calc import orderPersonalDiscountCalcView
+
 

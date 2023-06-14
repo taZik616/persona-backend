@@ -8,3 +8,4 @@ from .split_string import splitString
 from .random_card_code import randomCardCode
 from .select_all_from_products import selectAllFromProducts
 from .get_server_settings import getServerSettings
+from .get_women_and_men_cats import getWomenAndMenCats

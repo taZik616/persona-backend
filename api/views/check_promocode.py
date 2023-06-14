@@ -6,30 +6,37 @@ from datetime import date
 from api.serializers import PromocodeSerializer
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def checkPromocode(request):
+def checkPromocode(promocode: str, user: User):
     try:
-        promocode = request.data.get('promocode')
         if not promocode:
-            return Response({'error': 'Вы не указали промо-код'}, status=400)
+            return {'error': 'Вы не указали промо-код'}
 
         promocode = Promocode.objects.filter(code=promocode).first()
         if not promocode:
-            return Response({'error': 'Такого промо-кода нету'}, status=400)
+            return {'error': 'Такого промо-кода нету'}
 
         curDate = date.today()
         if promocode.endDate and not promocode.endDate >= curDate:
-            return Response({'error': 'Промокод уже не действителен'}, status=400)
+            return {'error': 'Промокод уже не действителен'}
 
-        user: User = request.user
         if user.usedPromocodes.filter(code=promocode.code).exists():
-            return Response({'error': 'Вы уже использовали этот промокод'}, status=400)
+            return {'error': 'Вы уже использовали этот промокод'}
         
-        return Response({
+        return {
             'success': 'Промокод прошел проверку',
             'data': PromocodeSerializer(promocode).data
-        })
+        }
     except Exception as e:
         print(str(e))
-        return Response({'error': 'Ошибка сервера, попробуйте позже'}, status=400)
+        return {'error': 'Ошибка сервера, попробуйте позже'}
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def checkPromocodeView(request):
+    promocode = request.data.get('promocode', '')
+    data = checkPromocode(promocode, request.user)
+
+    if data.get('error'):
+        return Response(data, status=400)
+    else:
+        return Response(data)

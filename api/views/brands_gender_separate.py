@@ -1,7 +1,8 @@
-from api.models import Brand, Category, Product, ProductImage
+from api.models import Brand, Product, ProductImage
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
+from api.utils import getWomenAndMenCats
 
 
 @api_view(['POST'])
@@ -13,11 +14,7 @@ def brandsGenderSeparate(request):
 
         withImages = ProductImage.objects.values_list('imageId', flat=True)
         items = items.filter(productId__in=withImages)
-
-        menCats = Category.objects.filter(level=1, gender='men').values_list('categoryId', flat=True)
-        womenCats = Category.objects.filter(level=1, gender='women').values_list('categoryId', flat=True)
-        menCats = [str(catId) for catId in menCats]
-        womenCats = [str(catId) for catId in womenCats]
+        [menCats, womenCats] = getWomenAndMenCats()
 
         menProds = items.filter(categoryId__in=menCats)
         womenProds = items.filter(categoryId__in=womenCats)
