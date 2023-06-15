@@ -27,6 +27,7 @@ urlpatterns = [
     path('check-order-status', views.checkOrderStatus),
     path('order-personal-discount-calc', views.orderPersonalDiscountCalcView),
     path('update-all-order-statuses', views.updateAllOwnOrdersStatus),
+    path('delivery-price', views.deliveryPrice),
     path('main-content', views.MainContentView),
     path('discount-card-info', views.DiscountCardInfoView.as_view()),
     path('sizes-page', views.SizesPageView.as_view()),

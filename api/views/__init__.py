@@ -19,5 +19,4 @@ from .check_promocode import checkPromocodeView
 from .create_order import createOrder
 from .check_order_status import checkOrderStatus, updateAllOwnOrdersStatus
 from .order_personal_discount_calc import orderPersonalDiscountCalcView
-
-
+from .delivery_price import deliveryPrice
