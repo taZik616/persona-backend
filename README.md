@@ -36,6 +36,19 @@ python manage.py createsuperuser
 
 > `cmd + D` - выйти
 
+## Чистка docker
+
+```sh
+docker rm $(docker ps -aq)
+docker volume rm $(docker volume ls -q)
+docker image prune
+docker builder prune
+docker container prune
+docker system prune
+docker rmi --force $(docker images -aq)
+docker system prune --all --force --volumes
+```
+
 ## Запуск без Docker
 
 ### 1. Запустите установку зависимостей
