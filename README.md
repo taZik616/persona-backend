@@ -11,15 +11,15 @@
 ## Запускаем эту команду в корне проекта
 
 ```sh
-docker-compose build
-docker-compose up
+sudo docker compose up --build -d
+# или
+sudo docker compose -f docker-compose-debug.yml up --build -d
 ```
 
-или, если она не работает
+Если при запуске возникла ошибка `failed to solve: error getting credentials - err: exit status 1, out: \`\``, то запустите команду:
 
 ```sh
-docker compose build
-docker compose up
+rm ~/.docker/config.json
 ```
 
 ## Server setup

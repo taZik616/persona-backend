@@ -9,4 +9,5 @@ from .collection import Collection
 from .discount_card import DiscountCard, DiscountCardLevel
 from .promocode import Promocode
 from .order import Order
+from .fast_order import FastOrder
 from .server_settings import ServerSettings

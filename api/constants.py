@@ -13,8 +13,8 @@ ORDER_STATUS = (
     ('NotPaid', 'Не оплачен'),
     ('AlreadyPaid', 'Оплачен'),
     ('Mistaken', 'Произошла ошибка при оплате'),
-    ('AuthBankServerInit', 'Инициирована авторизация через сервер контроля доступа банка-эмитента'),
-    ('AuthorizationDenied', 'Авторизация отклонена')
+    ('Delivery', 'Доставляется'),
+    ('Received', 'Получен'),
 )
 
 MAIN_CONTENTS = (

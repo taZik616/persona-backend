@@ -24,6 +24,8 @@ urlpatterns = [
     path('basket', views.BasketView.as_view()),
     path('check-promocode', views.checkPromocodeView),
     path('create-order', views.createOrder),
+    path('create-fast-order', views.createFastOrder),
+    path('my-orders', views.getOwnOrders),
     path('check-order-status', views.checkOrderStatus),
     path('order-personal-discount-calc', views.orderPersonalDiscountCalcView),
     path('update-all-order-statuses', views.updateAllOwnOrdersStatus),

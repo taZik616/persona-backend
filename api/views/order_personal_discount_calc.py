@@ -85,9 +85,9 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
                     preparedProductsData.append({
                         'product': ProductSerializer(variant.product, context={'request': request}).data,
                         'variant': ProductVariantSerializer(variant).data,
-                        'personalDiscountInRub': personalDiscountInRub
+                        'personalDiscountInRub': int(personalDiscountInRub)
                     })
-                    
+
                 else:
                     preparedProductsData.append({
                         'product': ProductSerializer(variant.product, context={'request': request}).data,
@@ -105,17 +105,27 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
 
                     priceWithoutPersonalDiscount += price
                     priceWithPersonalDiscount += price - personalDiscountInRub
-
                     preparedProductsData.append({
                         'product': ProductSerializer(variant.product, context={'request': request}).data,
                         'variant': ProductVariantSerializer(variant).data,
-                        'personalDiscountInRub': personalDiscountInRub
+                        'personalDiscountInRub': int(personalDiscountInRub)
+                    })
+            else:
+                for variant in variants:
+                    price = variant.price - variant.price / 100 * variant.discountPercent
+
+                    priceWithoutPersonalDiscount += price
+                    priceWithPersonalDiscount += price
+
+                    preparedProductsData.append({
+                        'product': ProductSerializer(variant.product, context={'request': request}).data,
+                        'variant': ProductVariantSerializer(variant).data
                     })
 
         return {
             'priceWithoutPersonalDiscount': priceWithoutPersonalDiscount,
             'priceWithPersonalDiscount': priceWithPersonalDiscount,
-            'products':preparedProductsData
+            'products': preparedProductsData
         }
     except Exception as e:
         print(e)

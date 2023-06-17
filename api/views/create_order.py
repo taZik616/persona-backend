@@ -16,8 +16,11 @@ from api.views.order_personal_discount_calc import orderPersonalDiscountCalc
 @permission_classes([IsAuthenticated])
 def createOrder(request):
     productVariantIds = request.data.get('productVariantIds', '')
+    address = request.data.get('address', '')
     promocode = request.data.get('promocode', '')
 
+    if not address:
+        return Response({'error': 'Укажите адрес на который нужно отправить заказ'}, status=400)
     if not productVariantIds:
         return Response({'error': 'Укажите товары которые хотите разместить в заказе'}, status=400)
     
@@ -41,15 +44,16 @@ def createOrder(request):
         productsData = selectAllFromProducts(f'Message_ID in ({",".join(productVariantIds)})')
 
         settings = getServerSettings()
-
         if not settings:
             return Response({'error': SETTINGS_ERROR}, status=400)
-        
+
         createdOrder = Order.objects.create(
-            productsInfo=productsData,
+            productsLegacyInfo=productsData,
+            productsInfo=orderData['products'],
             costumerInfo=UserInfoSerializer(request.user).data,
             status='NotPaid',
-            user=request.user
+            user=request.user,
+            address=address
         )
 
         deliveryCost = settings["delivery_cost_in_rub"]
@@ -64,8 +68,8 @@ def createOrder(request):
             'orderNumber': createdOrder.orderId,
             'description': f'Оплата заказа №{createdOrder.orderId} в магазине Персона. Артикулы покупаемых товаров: {", ".join(articles)}'[:512],
             'amount': int(orderPrice),
-            'returnUrl': 'personashop://',
-            'failUrl': 'personashop://'
+            'returnUrl': 'personashop://orders',
+            'failUrl': 'personashop://order-pay-failed'
         }
 
         registerUrl = f'{settings["sber_api_url"]}/register.do'

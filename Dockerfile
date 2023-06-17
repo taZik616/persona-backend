@@ -2,6 +2,7 @@ FROM python:3.11
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONWARNINGS="ignore:Unverified HTTPS request"
 
 RUN apt-get update && apt-get install -y memcached && rm -rf /var/lib/apt/lists/*
 # && apt-get install -y memcached rabbitmq-server docker-compose 

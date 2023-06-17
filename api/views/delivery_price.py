@@ -10,4 +10,4 @@ def deliveryPrice(request):
     settings = getServerSettings()
     if not settings:
         return Response({'error': SETTINGS_ERROR}, status=400)
-    return Response({'success': settings['delivery_cost_in_rub']})
+    return Response(settings['delivery_cost_in_rub'])

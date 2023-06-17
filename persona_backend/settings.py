@@ -1,7 +1,9 @@
 from pathlib import Path
 
-from environment import DJANGO_SECRET_KEY, MEMCACHED_LOCATION, MYSQL_DB_PASSWORD, MYSQL_DB_USER, DJANGO_DB_CONFIG
+from environment import DJANGO_SECRET_KEY, MEMCACHED_LOCATION, DJANGO_DB_CONFIG
 from os import path
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -92,7 +94,10 @@ WSGI_APPLICATION = 'persona_backend.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': DJANGO_DB_CONFIG
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db' / 'db.sqlite3'
+    } if DEBUG else DJANGO_DB_CONFIG
 }
 
 
