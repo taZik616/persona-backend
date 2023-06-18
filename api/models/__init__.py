@@ -11,3 +11,4 @@ from .promocode import Promocode
 from .order import Order
 from .fast_order import FastOrder
 from .server_settings import ServerSettings
+from .gift_card import GiftCard, GiftCardType

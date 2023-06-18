@@ -68,7 +68,7 @@ def createOrder(request):
             'orderNumber': createdOrder.orderId,
             'description': f'Оплата заказа №{createdOrder.orderId} в магазине Персона. Артикулы покупаемых товаров: {", ".join(articles)}'[:512],
             'amount': int(orderPrice),
-            'returnUrl': 'personashop://orders',
+            'returnUrl': 'personashop://order-pay-success',
             'failUrl': 'personashop://order-pay-failed'
         }
 

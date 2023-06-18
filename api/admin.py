@@ -4,7 +4,7 @@ from api.models import Brand, MainContent, AnotherImage, User, \
     Category, ProductVariant, Product, ProductImage, \
     FavoriteItem, BasketItem, OtherContent, MainSwiperImage, Color, \
     Collection, DiscountCard, DiscountCardLevel, Promocode, Order, \
-    ServerSettings, FastOrder
+    ServerSettings, FastOrder, GiftCardType, GiftCard
 
 admin.site.register(User)
 admin.site.register(Brand)
@@ -20,6 +20,8 @@ admin.site.register(DiscountCard)
 admin.site.register(DiscountCardLevel)
 admin.site.register(Promocode)
 admin.site.register(ServerSettings)
+admin.site.register(GiftCard)
+admin.site.register(GiftCardType)
 
 @admin.register(FastOrder)
 class FastOrderAdmin(admin.ModelAdmin):
