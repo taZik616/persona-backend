@@ -1,4 +1,3 @@
-import re
 import requests
 from api.common_error_messages import SETTINGS_ERROR
 
@@ -8,7 +7,7 @@ from rest_framework.response import Response
 
 from api.serializers import UserInfoSerializer
 from api.utils import splitString, selectAllFromProducts, getServerSettings
-from api.models import ProductVariant, Order, Promocode
+from api.models import ProductVariant, Order, Promocode, GiftCard
 from api.views.check_order_status import checkOrderStatusAndUpdateStateTask
 from api.views.order_personal_discount_calc import orderPersonalDiscountCalc
 
@@ -23,7 +22,11 @@ def createOrder(request):
         return Response({'error': 'Укажите адрес на который нужно отправить заказ'}, status=400)
     if not productVariantIds:
         return Response({'error': 'Укажите товары которые хотите разместить в заказе'}, status=400)
-    
+    giftCard = GiftCard.objects.filter(promocode=promocode).first()
+    if giftCard and giftCard.isBlocked:
+        return Response({'error': 'Подарочноя карта временно заморожена, после проверки сделанного заказа вы сможете продолжить ей пользоваться'}, status=400)
+    if giftCard and not giftCard.isActive:
+        return Response({'error': 'Карта не активирована, для активации нужно оплатить заказ'}, status=400)
     orderData = orderPersonalDiscountCalc(productVariantIds, request.user, promocode, request)
 
     if orderData.get('error'):
@@ -78,8 +81,13 @@ def createOrder(request):
             createdOrder.orderSberId = data['orderId']
             createdOrder.usedPromocode = Promocode.objects.filter(code=promocode).first()
             createdOrder.save()
+
+            if giftCard:
+                giftCard.isBlocked = True
+                giftCard.save()
             checkOrderStatusAndUpdateStateTask.apply_async(
                 args=[data['orderId']],
+                kwargs={'giftCardUsed': True, 'giftCardPromocode': promocode},
                 countdown=settings["sber_api_payment_time_limit"]
             )
         return Response({

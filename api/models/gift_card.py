@@ -6,20 +6,31 @@ from os import path, remove
 from django.core.files.storage import default_storage
 import random
 import string
+from array import array
 
+
+def defaultAmountVariants():
+    return [5000, 10000, 50000]
+
+def isArray(obj):
+    return isinstance(obj, (list, tuple, array))
 
 class GiftCardType(models.Model):
-    initialCardAmount = models.PositiveIntegerField(primary_key=True, unique=True)
     image = models.ImageField(default=None, upload_to='gift-card/')
     title = models.CharField(max_length=2000)
     description = models.CharField(max_length=2000)
+    amountVariants = models.JSONField(
+        default=defaultAmountVariants,
+        help_text='Тут мы указываем какие номиналы карт доступны для покупок'
+    )
 
     class Meta:
         verbose_name = 'Тип подарочных карт'
         verbose_name_plural = '4.2. Типы подарочных карт'
 
     def __str__(self):
-        return f"{self.pk}. \"{self.title}\", начальный номинал: {self.initialCardAmount} ₽"
+        nominals = ', '.join(str(item) for item in self.amountVariants) if isArray(self.amountVariants) else 'NULL'
+        return f"{self.pk}. \"{self.title}\", возможные номиналы: {nominals} ₽"
 
 @receiver(pre_delete, sender=GiftCardType)
 def deleteImage(sender, instance, **kwargs):
@@ -45,14 +56,15 @@ def generateGiftCardId():
     return 'gift-card-' + ''.join(random.choice(chars) for _ in range(20))
 
 class GiftCard(models.Model):
-    giftCardId = models.CharField(default=generateGiftCardId, max_length=32, unique=True, db_index=True, primary_key=True)
+    promocode = models.CharField(default=generateGiftCardId, max_length=32, unique=True, db_index=True, primary_key=True)
     balance = models.PositiveIntegerField(default=0)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     cardType = models.ForeignKey(
         GiftCardType, on_delete=models.SET_NULL, blank=True, null=True
     )
-    promocode = models.UUIDField(blank=True)
     isActive = models.BooleanField(default=False)
+    isBlocked = models.BooleanField(default=False)
+    orderSberId = models.CharField(max_length=255, blank=True)
 
     class Meta:
         verbose_name = 'Подарочная карта'

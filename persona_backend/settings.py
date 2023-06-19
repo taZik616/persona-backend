@@ -93,11 +93,15 @@ WSGI_APPLICATION = 'persona_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db' / 'db.sqlite3'
+#     } if DEBUG else DJANGO_DB_CONFIG
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db' / 'db.sqlite3'
-    } if DEBUG else DJANGO_DB_CONFIG
+    'default': DJANGO_DB_CONFIG
 }
 
 

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from api.serializers import ProductSerializer, ProductVariantSerializer
 from api.utils import splitString, getWomenAndMenCats
-from api.models import ProductVariant, DiscountCard, Promocode, User, Product
+from api.models import ProductVariant, DiscountCard, Promocode, User, Product, GiftCard
 
 
 def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str, request = None):
@@ -20,17 +20,37 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
         productIdsForVariants = [productId for productId in variants.values_list('product', flat=True)]
         products = Product.objects.filter(productId__in=productIdsForVariants)
 
-        if promocode:
+        if promocode and 'gift-card-' not in promocode:
             promoCheckRes = checkPromocode(promocode, user)
             if promoCheckRes.get('error'):
                 return promoCheckRes
+        giftCard = GiftCard.objects.filter(promocode=promocode, isActive=True).first()
         promocode = Promocode.objects.filter(code=promocode).first()
 
         preparedProductsData = []
         priceWithoutPersonalDiscount = 0
         priceWithPersonalDiscount = 0
 
-        if promocode: # Промокод найден и действителен
+        if giftCard:
+            balance = giftCard.balance
+            for variant in variants:
+                price = variant.price - variant.price / 100 * variant.discountPercent
+                personalDiscountInRub = 0
+                if balance >= price:
+                    balance -= price
+                    personalDiscountInRub = price
+                else:
+                    personalDiscountInRub = balance
+                    balance = 0
+
+                priceWithoutPersonalDiscount += price
+                priceWithPersonalDiscount += price - personalDiscountInRub
+                preparedProductsData.append({
+                    'product': ProductSerializer(variant.product, context={'request': request}).data,
+                    'variant': ProductVariantSerializer(variant).data,
+                    'personalDiscountInRub': int(personalDiscountInRub)
+                })
+        elif promocode: # Промокод найден и действителен
             productFilters = promocode.productFilters or {}
             subcategoryIds = productFilters.get('subcategoryIds')
             categoryId = productFilters.get('categoryId')

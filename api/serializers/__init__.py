@@ -8,3 +8,4 @@ from .collection import CollectionSerializer
 from .discount_card import DiscountCardLevelSerializer, DiscountCardSerializer
 from .promocode import PromocodeSerializer
 from .order import OrderSerializer
+from .gift_card import GiftCardTypeSerializer, GiftCardSerializer
