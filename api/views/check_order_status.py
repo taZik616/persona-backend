@@ -43,12 +43,10 @@ def checkOrderStatusAndUpdateStateTask(orderId, isFastOrder = False, giftCardUse
                 return {'error': 'Не удалось найти заказ'}
             # После прошествия 20 мин разблокируем карту
             giftCard = GiftCard.objects.filter(promocode=giftCardPromocode).first()
-            print(giftCard)
-            print(giftCardUsed)
             if (giftCard and giftCardUsed and giftCard.isBlocked) or (giftCard and data['orderStatus'] == 2 and giftCard.isBlocked):
                 giftCard.isBlocked = False
-                totalPersonalDiscount = reduce(lambda prev, a: prev + a.get('personalDiscountInRub', 0), order.productsInfo, 0)
-                giftCard.balance -= totalPersonalDiscount
+                totalPersonalDiscount = reduce(lambda prev, a: prev + int(a.get('personalDiscountInRub', 0)), order.productsInfo, 0)
+                giftCard.balance = int(giftCard.balance) - int(totalPersonalDiscount)
                 giftCard.save()
             if order.status not in ['Delivery', 'Received', 'AlreadyPaid']:
                 match data['orderStatus']:
@@ -93,7 +91,12 @@ def checkOrderStatus(request):
 def updateAllOwnOrdersStatus(request):
     try:
         orders = Order.objects.filter(user=request.user)
+        giftBlockedCards = GiftCard.objects.filter(isBlocked=True, user=request.user)
         for order in orders:
+            # Я бы мог в ордер записывать промокод подарочной карты но я это поздно понял(когда наполнил БД )
+            for blockedCard in giftBlockedCards:
+                checkOrderStatusAndUpdateStateTask(order.orderSberId, giftCardPromocode=blockedCard.promocode)
+            #
             data = checkOrderStatusAndUpdateStateTask(order.orderSberId)
             if data.get('error'):
                 checkOrderStatusAndUpdateStateTask(order.orderSberId, True)
