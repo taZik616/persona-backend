@@ -7,11 +7,11 @@ from django.core.cache import cache
 class HelpfulInfoView(APIView):
     def get(self, request, infoName):
         try:
-            content = cache.get(f'helpful-info-{infoName}')
-            if not content:
+            content = cache.get(f'helpful-info')
+            if not content or infoName not in content:
                 return Response({'error': 'Информация не найдена'}, status=404)
 
-            return Response({'data': content})
+            return Response({'data': content[infoName]})
         except:
             return Response({'error': 'Информация не найдена'}, status=404)
 
@@ -22,7 +22,15 @@ class HelpfulInfoView(APIView):
             content = request.data.get('content')
             if not content:
                 return Response({'error': 'Укажите контент'}, status=400)
-            cache.set(f'helpful-info-{infoName}', content)
+            if not infoName:
+                return Response({'error': 'Укажите в строке запроса для чего данное описание'}, status=400)
+            
+            all_content = cache.get(f'helpful-info')
+            if not all_content:
+                all_content = {}
+            
+            all_content[infoName] = content
+            cache.set(f'helpful-info', all_content)
 
             return Response({'success': f"Вы успешно добавили этот текст для '{infoName}'"})
         except:
@@ -32,8 +40,13 @@ class HelpfulInfoView(APIView):
         if not request.user.is_superuser:
             return Response({'error': ONLY_ADMIN}, status=400)
         try:
-            cache.delete(f'helpful-info-{infoName}')
+            content = cache.get(f'helpful-info')
+            if not content or infoName not in content:
+                return Response({'error': 'Информация не найдена'}, status=404)
+            
+            del content[infoName]
+            cache.set(f'helpful-info', content)
 
             return Response({'success': f"Вы успешно удалили контент для '{infoName}'"})
         except:
-            return Response({'error': f'Не удалось добавить контент'}, status=400)
+            return Response({'error': f'Не удалось удалить контент'}, status=400)
