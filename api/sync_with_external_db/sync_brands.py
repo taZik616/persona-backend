@@ -1,4 +1,5 @@
 import mimetypes
+import re
 from uuid import uuid4
 
 import requests
@@ -33,7 +34,11 @@ def syncBrandsTask():
                 fileExtension = mimetypes.guess_extension(
                     response.headers.get("content-type"))
                 if not fileExtension:
-                    continue
+                    match = re.search(r'image/([a-zA-Z]+)', string)
+                    if match:
+                        fileExtension = match.group(1)
+                    else:
+                        continue
 
                 fileName = f"{uuid4()}{fileExtension}"
 
