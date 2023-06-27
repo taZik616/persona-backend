@@ -1,11 +1,31 @@
 from django.contrib import admin
+from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
-from api.models import (AnotherImage, BasketItem, Brand, Category, Collection,
-                        Color, DiscountCard, DiscountCardLevel, FastOrder,
-                        FavoriteItem, GiftCard, GiftCardType, MainContent,
-                        MainSwiperImage, Order, OtherContent, Product,
-                        ProductImage, ProductVariant, Promocode,
-                        ServerSettings, User)
+from api.models import (
+    AnotherImage,
+    BasketItem,
+    Brand,
+    Category,
+    Collection,
+    Color,
+    DiscountCard,
+    DiscountCardLevel,
+    FastOrder,
+    FavoriteItem,
+    GiftCard,
+    GiftCardType,
+    MainContent,
+    MainSwiperImage,
+    Order,
+    OtherContent,
+    Product,
+    ProductImage,
+    ProductVariant,
+    Promocode,
+    ServerSettings,
+    User,
+)
 
 admin.site.register(User)
 admin.site.register(Brand)
@@ -40,6 +60,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ['orderId', 'orderSberId', 'status', 'user', 'address']
     search_fields = ('orderId', 'orderSberId', 'user__phoneNumber')
     list_per_page = 150
+    list_filter = ['status', 'user__phoneNumber']
 
 
 @admin.register(Color)
@@ -55,6 +76,7 @@ class CategoryAdmin(admin.ModelAdmin):
     ordering = ('level', 'gender')
     search_fields = ('name', 'categoryId', 'keywords', 'description')
     list_per_page = 150
+    list_filter = ['gender', 'level']
 
 
 @admin.register(Product)
@@ -66,6 +88,7 @@ class ProductAdmin(admin.ModelAdmin):
                      'keywords', 'price', 'description')
     list_per_page = 250
 
+    list_filter = ('brand__name', 'isNew', 'categoryId', 'subcategoryId', 'isAvailable', 'onlyOneVariant', 'checked')
 
 @admin.register(ProductVariant)
 class ProductVariantAdmin(admin.ModelAdmin):
@@ -81,3 +104,4 @@ class ProductVariantAdmin(admin.ModelAdmin):
     search_fields = ('uniqueId', 'product__productName',
                      'price', 'color', 'size')
     list_per_page = 250
+    list_filter = ['product__productId']

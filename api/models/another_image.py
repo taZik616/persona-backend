@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 
 class AnotherImage(models.Model):
-    image = models.ImageField(default=None, upload_to='another-images/')
+    image = models.ImageField(default=None, upload_to='another-images/', verbose_name='Картинка')
 
     class Meta:
         verbose_name = 'Картинка'

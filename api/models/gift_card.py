@@ -20,12 +20,12 @@ def isArray(obj):
 
 
 class GiftCardType(models.Model):
-    image = models.ImageField(default=None, upload_to='gift-card/')
-    title = models.CharField(max_length=2000)
-    description = models.CharField(max_length=2000)
+    image = models.ImageField(default=None, upload_to='gift-card/', verbose_name='Картинка')
+    title = models.CharField(max_length=2000, verbose_name='Название')
+    description = models.CharField(max_length=2000, verbose_name='Описание')
     amountVariants = models.JSONField(
         default=defaultAmountVariants,
-        help_text='Тут мы указываем какие номиналы карт доступны для покупок'
+        help_text='Тут мы указываем какие номиналы карт доступны для покупок', verbose_name='Варианты номинала'
     )
 
     class Meta:

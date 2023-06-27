@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Promocode(models.Model):
-    code = models.CharField(max_length=60, unique=True)
+    code = models.CharField(max_length=60, unique=True, verbose_name='Код')
     benefit = models.JSONField(help_text='''
 {<br>
     "discountPercent": 30,<br>
@@ -26,7 +26,7 @@ null - значит промокод действует на все товары
 ''', null=True, blank=True)
     endDate = models.DateField(null=True, blank=True, help_text='''
 Метка времени до которого промокод будет активен
-''')
+''', verbose_name='Преимущества')
 
     class Meta:
         verbose_name = 'Промокод'

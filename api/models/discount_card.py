@@ -7,13 +7,13 @@ from api.utils import connectToPersonaDB
 
 
 class DiscountCardLevel(models.Model):
-    level = models.IntegerField(primary_key=True, unique=True)
+    level = models.IntegerField(primary_key=True, unique=True, verbose_name='Уровень')
     purchaseThreshold = models.PositiveIntegerField(help_text='''
 Это значение определяет минимальную сумму покупок, необходимую для перехода карты на данный уровень.<br>
 Уровень карты будет установлен на основе максимального уровня, если сумма покупок соответствует этому порогу.
-''', unique=True)
-    discountPercent = models.IntegerField()
-    encodedValue = models.CharField(max_length=100)
+''', unique=True, verbose_name='Необходимая сумма покупок')
+    discountPercent = models.IntegerField(verbose_name='Процент скидки')
+    encodedValue = models.CharField(max_length=100, verbose_name='Закодированное значение')
 
     class Meta:
         verbose_name = 'Уровень скидочных карт'
@@ -25,12 +25,12 @@ class DiscountCardLevel(models.Model):
 
 class DiscountCard(models.Model):
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, primary_key=True)
-    cardCode = models.CharField(max_length=100, unique=True)
+        User, on_delete=models.CASCADE, primary_key=True, verbose_name='Пользователь')
+    cardCode = models.CharField(max_length=100, unique=True, verbose_name='Код карты')
     cardLevel = models.ForeignKey(
-        DiscountCardLevel, on_delete=models.SET_NULL, blank=True, null=True
+        DiscountCardLevel, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Уровень карты'
     )
-    purchaseTotal = models.IntegerField(default=0)
+    purchaseTotal = models.IntegerField(default=0, verbose_name='Сумма покупок')
 
     class Meta:
         verbose_name = 'Скидочная карта'

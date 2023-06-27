@@ -1,8 +1,12 @@
 from django.db import models
 
-from environment import (SBER_API_LOGIN, SBER_API_PASSWORD,
-                         SBER_API_PAYMENT_TIME_LIMIT, SBER_API_URL,
-                         SMS_RU_API_KEY)
+from environment import (
+    SBER_API_LOGIN,
+    SBER_API_PASSWORD,
+    SBER_API_PAYMENT_TIME_LIMIT,
+    SBER_API_URL,
+    SMS_RU_API_KEY,
+)
 
 
 class ServerSettings(models.Model):
@@ -13,9 +17,9 @@ class ServerSettings(models.Model):
         default=SBER_API_PASSWORD, max_length=1000)
     delivery_cost_in_rub = models.PositiveIntegerField()
     sber_api_payment_time_limit_sec = models.PositiveIntegerField(
-        default=SBER_API_PAYMENT_TIME_LIMIT)
+        default=SBER_API_PAYMENT_TIME_LIMIT, verbose_name='Время через которое запускается авто-проверка статуса созданного заказа')
 
-    isActive = models.BooleanField(default=True)
+    isActive = models.BooleanField(default=True, verbose_name='Активированные(да/нет)')
 
     class Meta:
         verbose_name = 'Настройка сервера'

@@ -6,16 +6,16 @@ from api.models.user import User
 
 
 class Order(models.Model):
-    orderId = models.AutoField(unique=True, db_index=True, primary_key=True)
-    orderSberId = models.CharField(max_length=255, blank=True)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    address = models.CharField(max_length=1500)
-    productsLegacyInfo = models.JSONField(blank=False)
-    productsInfo = models.JSONField(blank=False)
-    costumerInfo = models.JSONField(blank=False)
+    orderId = models.AutoField(unique=True, db_index=True, primary_key=True, verbose_name='Идентификатор')
+    orderSberId = models.CharField(max_length=255, blank=True, verbose_name='Идентификатор сбербанка')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name='Пользователь')
+    address = models.CharField(max_length=1500, verbose_name='Адрес')
+    productsLegacyInfo = models.JSONField(blank=False, verbose_name='Инфо о товарах в устаревшем виде')
+    productsInfo = models.JSONField(blank=False, verbose_name='Инфо о товарах')
+    costumerInfo = models.JSONField(blank=False, verbose_name='Инфо о пользователе')
     usedPromocode = models.ForeignKey(
-        Promocode, on_delete=models.SET_NULL, blank=True, null=True)
-    status = models.CharField(max_length=50, choices=ORDER_STATUS)
+        Promocode, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Промокод')
+    status = models.CharField(max_length=50, choices=ORDER_STATUS, verbose_name='Статус')
 
     class Meta:
         verbose_name = 'Заказ'

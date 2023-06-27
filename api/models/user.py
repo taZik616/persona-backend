@@ -1,7 +1,10 @@
 from typing import Any
 
-from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
-                                        PermissionsMixin)
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.db import models
 
 from .product import Product, ProductVariant
@@ -49,22 +52,22 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    userId = models.AutoField(primary_key=True, unique=True)
-    language = models.CharField(default='Russian', max_length=15)
-    phoneNumber = models.CharField(max_length=15, default='', unique=True)
-    firstName = models.CharField(max_length=40, blank=True)
-    lastName = models.CharField(max_length=40, blank=True)
-    email = models.EmailField(max_length=200, blank=True)
-    birthday = models.CharField(max_length=120, default='', blank=True)
-    isPhoneNumberVerified = models.BooleanField(default=False, blank=True)
-    usedPromocodes = models.ManyToManyField(Promocode, blank=True)
+    userId = models.AutoField(primary_key=True, unique=True, verbose_name='Идентификатор')
+    language = models.CharField(default='Russian', max_length=15, verbose_name='Язык')
+    phoneNumber = models.CharField(max_length=15, default='', unique=True, verbose_name='Номер телефона')
+    firstName = models.CharField(max_length=40, blank=True, verbose_name='Имя')
+    lastName = models.CharField(max_length=40, blank=True, verbose_name='Фамилия')
+    email = models.EmailField(max_length=200, blank=True, verbose_name='e-mail')
+    birthday = models.CharField(max_length=120, default='', blank=True, verbose_name='Дата рождения')
+    isPhoneNumberVerified = models.BooleanField(default=False, blank=True, verbose_name='Подтвержденный телефон(да/нет)')
+    usedPromocodes = models.ManyToManyField(Promocode, blank=True, verbose_name='Использованные промокоды')
 
-    subEmail = models.BooleanField(default=False, blank=True)
-    subSms = models.BooleanField(default=False, blank=True)
-    subPush = models.BooleanField(default=False, blank=True)
+    subEmail = models.BooleanField(default=False, blank=True, verbose_name='Подписка на e-mail')
+    subSms = models.BooleanField(default=False, blank=True, verbose_name='Подписка на sms')
+    subPush = models.BooleanField(default=False, blank=True, verbose_name='Подписка на push-уведомления')
 
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False, verbose_name='Персонал')
+    is_superuser = models.BooleanField(default=False, verbose_name='Супер пользователь')
 
     USERNAME_FIELD = 'phoneNumber'
 
@@ -83,10 +86,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class BasketItem(models.Model):
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE)
-    variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
+        Product, on_delete=models.CASCADE, verbose_name='Товар')
+    variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE, verbose_name='Вариант')
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='basketItems')
+        User, on_delete=models.CASCADE, related_name='basketItems', verbose_name='Пользователь')
 
     class Meta:
         verbose_name = 'Элемент корзины'
@@ -97,9 +100,9 @@ class BasketItem(models.Model):
 
 
 class FavoriteItem(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Товар')
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='favoriteItems')
+        User, on_delete=models.CASCADE, related_name='favoriteItems', verbose_name='Пользователь')
 
     class Meta:
         verbose_name = 'Элемент избранного'

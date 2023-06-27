@@ -5,9 +5,9 @@ class Collection(models.Model):
     collectionId = models.CharField(
         max_length=100, blank=False,
         null=False, primary_key=True,
-        unique=True
+        unique=True, verbose_name='Идентификатор'
     )
-    name = models.CharField(max_length=1000, blank=False, null=False)
+    name = models.CharField(max_length=1000, blank=False, null=False, verbose_name='Название')
 
     class Meta:
         verbose_name = 'Коллекция'

@@ -3,9 +3,9 @@ from django.db import models
 
 class Color(models.Model):
     name = models.CharField(
-        max_length=1000, blank=False, null=False, unique=True, primary_key=True
+        max_length=1000, blank=False, null=False, unique=True, primary_key=True, verbose_name='Название'
     )
-    hex = models.CharField(max_length=9)
+    hex = models.CharField(max_length=9, verbose_name='Код цвета(hex)')
 
     class Meta:
         verbose_name = 'Цвет'

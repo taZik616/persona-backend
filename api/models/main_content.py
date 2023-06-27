@@ -4,9 +4,9 @@ from api.constants import GENDERS, MAIN_CONTENTS
 
 
 class MainSwiperImage(models.Model):
-    imageUrl = models.URLField()
+    imageUrl = models.URLField(verbose_name='URL картинки')
     # Здесь будут фильтры для просмотра товаров соответствующих картинке
-    productFilters = models.JSONField()
+    productFilters = models.JSONField(verbose_name='Фильтры товаров')
 
     class Meta:
         verbose_name = 'Картинка для свайпера'
@@ -18,8 +18,8 @@ def defaultItemsValue():
 
 
 class OtherContent(models.Model):
-    type = models.CharField(max_length=200, choices=MAIN_CONTENTS)
-    title = models.CharField(max_length=100)
+    type = models.CharField(max_length=200, choices=MAIN_CONTENTS, verbose_name='Тип содержания')
+    title = models.CharField(max_length=100, verbose_name='Заголовок')
     # Я без понятия что еще юзать если не джсон
     items = models.JSONField(default=defaultItemsValue, help_text='''
 queryFilters - параметры для дополнительной настройки запроса product
@@ -50,7 +50,7 @@ queryFilters - параметры для дополнительной настр
   productIds: string[],
   imgUri: string
 }
-''')
+''', verbose_name='Список элементов')
 
     class Meta:
         verbose_name = 'Доп. контент'
@@ -61,13 +61,13 @@ class MainContent(models.Model):
     """
     Модель которая отвечает за содержание главной страницы приложения
     """
-    mainSwiperImages = models.ManyToManyField(MainSwiperImage)
-    bannerCard = models.URLField()
-    otherContent = models.ManyToManyField(OtherContent)
+    mainSwiperImages = models.ManyToManyField(MainSwiperImage, verbose_name='Картинки главного свайпера')
+    bannerCard = models.URLField(verbose_name='Картинка баннера')
+    otherContent = models.ManyToManyField(OtherContent, verbose_name='Дополнительный контент')
     gender = models.CharField(
-        max_length=10, choices=GENDERS, default='', blank=False, null=False
+        max_length=10, choices=GENDERS, default='', blank=False, null=False, verbose_name='Пол'
     )
-    isInactive = models.BooleanField(default=False)
+    isInactive = models.BooleanField(default=False, verbose_name='Выключить')
 
     class Meta:
         verbose_name = 'Содержание главной страницы'
