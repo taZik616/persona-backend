@@ -15,7 +15,8 @@ def subcategoriesBindRandomProduct(request):
             withImages = ProductImage.objects.values_list('imageId', flat=True)
             items = Product.objects.filter(
                 subcategoryId=subCat.categoryId,
-                productId__in=withImages
+                productId__in=withImages,
+                isAvailable=True, checked=True
             ).filter()
             randomProduct = items.order_by('?').first()
             subCat.subcategoryPreviewProduct = randomProduct

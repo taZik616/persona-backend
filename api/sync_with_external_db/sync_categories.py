@@ -13,7 +13,7 @@ def syncCategoriesTask():
         connection = connectToPersonaDB()
         with connection.cursor() as cursor:
 
-            category_fields = 'Subdivision_ID, Parent_Sub_ID, Subdivision_Name, Description, Keywords'
+            category_fields = 'Subdivision_ID, Parent_Sub_ID, Subdivision_Name, Description, Keywords, Checked'
             # 178 - это товары для мужчин
             cursor.execute(
                 f'SELECT {category_fields} FROM Subdivision WHERE Parent_Sub_ID = 178')
@@ -26,7 +26,7 @@ def syncCategoriesTask():
             for index, rows in enumerate([menCategories, womenCategories]):
                 gender = 'men' if index == 0 else 'women'
                 for row in rows:
-                    uniqueId, parentId, name, description, keywords = row
+                    uniqueId, parentId, name, description, keywords, checked = row
                     keywords = keywords if keywords is not None else ''
                     description = description if description is not None else ''
                     Category.objects.update_or_create(
@@ -37,7 +37,8 @@ def syncCategoriesTask():
                             'description': description,
                             'keywords': keywords,
                             'level': CategoryLevel.CATEGORY,
-                            'gender': gender
+                            'gender': gender,
+                            'checked': checked
                         }
                     )
                     cursor.execute(
@@ -46,7 +47,7 @@ def syncCategoriesTask():
                     subcategories = cursor.fetchall()
                     for subcategory in subcategories:
                         subCatUniqueId, subCatParentId, subCatName, \
-                            subCatDescription, subCatKeywords = subcategory
+                            subCatDescription, subCatKeywords, checked = subcategory
                         subCatKeywords = subCatKeywords if subCatKeywords is not None else ''
                         subCatDescription = subCatDescription if subCatDescription is not None else ''
                         Category.objects.update_or_create(
@@ -57,7 +58,8 @@ def syncCategoriesTask():
                                 'description': subCatDescription,
                                 'keywords': subCatKeywords,
                                 'level': CategoryLevel.SUBCATEGORY,
-                                'gender': gender
+                                'gender': gender,
+                                'checked': checked
                             }
                         )
             # return Response({'success': 'Синхронизация категорий и подкатегорий прошла успешно'})

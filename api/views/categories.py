@@ -15,7 +15,7 @@ class CategoryListView(ListAPIView):
     ordering = ['level', 'gender']
 
     def get_queryset(self):
-        items = Category.objects.all()
+        items = Category.objects.filter(checked=True)
         level = self.request.GET.get('level')
         parentId = self.request.GET.get('parentId')
 

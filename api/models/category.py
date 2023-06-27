@@ -30,6 +30,7 @@ class Category(models.Model):
     categoryPreviewImage = models.ImageField(
         default=None, upload_to='category-images/', blank=True, null=True, verbose_name='Картинка для категории'
     )
+    checked = models.BooleanField(blank=False, null=False, verbose_name='Показывать пользователям(да/нет)')
 
     class Meta:
         verbose_name = 'Категория'

@@ -4,8 +4,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from api.models import (Category, CategoryLevel, Product, ProductImage,
-                        ProductVariant)
+from api.models import Category, CategoryLevel, Product, ProductImage, ProductVariant
 from api.serializers import ProductDetailSerializer, ProductSerializer
 from api.utils.split_string import splitString
 
