@@ -1,16 +1,20 @@
-from django.db import models
-from api.constants import ORDER_STATUS
 import random
 import string
+
+from django.db import models
+
+from api.constants import ORDER_STATUS
 
 
 def generateOrderId():
     chars = string.ascii_letters + string.digits
     return ''.join(random.choice(chars) for _ in range(30))
 
+
 class FastOrder(models.Model):
-    # Не AutoField потому что будет конфликт(в сбребанке) с заказами модели Order 
-    orderId = models.CharField(default=generateOrderId, max_length=32, unique=True, db_index=True, primary_key=True)
+    # Не AutoField потому что будет конфликт(в сбребанке) с заказами модели Order
+    orderId = models.CharField(
+        default=generateOrderId, max_length=32, unique=True, db_index=True, primary_key=True)
     orderSberId = models.CharField(max_length=255)
     phoneNumber = models.CharField(max_length=18)
     name = models.CharField(max_length=40)

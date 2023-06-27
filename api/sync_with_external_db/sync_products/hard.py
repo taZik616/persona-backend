@@ -1,13 +1,17 @@
+import re
+from datetime import datetime
+
+from celery import shared_task
+from django.core.cache import cache
+from pytz import timezone
 from rest_framework.response import Response
 
 from api.models import Product, ProductVariant
-from .common import PRODUCT_VARIANT_FIELDS, PRODUCT_FIELDS, prepareFields, prepareVariantFields, getPodklads, getSostavs
 from api.utils import connectToPersonaDB
-from django.core.cache import cache
-from datetime import datetime
-from pytz import timezone
-from celery import shared_task
-import re
+
+from .common import (PRODUCT_FIELDS, PRODUCT_VARIANT_FIELDS, getPodklads,
+                     getSostavs, prepareFields, prepareVariantFields)
+
 
 @shared_task
 def productSyncHard():
@@ -76,10 +80,11 @@ def productSyncHard():
                     if not product.price and varFields['isAvailable']:
                         product.price = varFields['price']
                         product.priceGroup = varFields['priceGroup']
-                        discount = re.search(r"\d+%", varFields['priceGroup']) if varFields['priceGroup'] else ''
+                        discount = re.search(
+                            r"\d+%", varFields['priceGroup']) if varFields['priceGroup'] else ''
                         if discount:
                             discount = int(discount.group().strip("%"))
-                        else: 
+                        else:
                             discount = 0
                         product.discountPercent = discount
                         product.isAvailable = True

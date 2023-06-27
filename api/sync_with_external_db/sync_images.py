@@ -1,15 +1,17 @@
-from api.models import ProductImage
-from api.utils import connectToPersonaDB, splitString
+import mimetypes
+from uuid import uuid4
+
 import requests
-from .utils import compressImage
+from celery import shared_task
+from django.core.files.base import ContentFile
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
-import mimetypes
-from uuid import uuid4
-from django.core.files.base import ContentFile
-from celery import shared_task
 
+from api.models import ProductImage
+from api.utils import connectToPersonaDB, splitString
+
+from .utils import compressImage
 
 # Варианты синхронизации:
 # 1. Загрузка картинкок, которых еще нету:
@@ -52,6 +54,7 @@ def syncImages(request):
 
 
 BASE_URL = 'https://personashop.com'
+
 
 @shared_task
 def syncImagesWhichNotHere():
@@ -96,6 +99,7 @@ def syncImagesWhichNotHere():
         print(e)
         # return Response({'error': 'При синхронизации картинок со сторонней БД произошла ошибка'}, status=400)
 
+
 @shared_task
 def syncImagesByIds(ids: list):
     try:
@@ -139,6 +143,7 @@ def syncImagesByIds(ids: list):
     except Exception as e:
         print(e)
         # return Response({'error': 'При синхронизации картинок со сторонней БД произошла ошибка'}, status=400)
+
 
 @shared_task
 def syncImagesHard():

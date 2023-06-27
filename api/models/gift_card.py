@@ -1,19 +1,23 @@
-from django.db import models
-from api.models.user import User
-from django.dispatch import receiver
-from django.db.models.signals import pre_delete, pre_save
-from os import path, remove
-from django.core.files.storage import default_storage
 import random
 import string
 from array import array
+from os import path, remove
+
+from django.core.files.storage import default_storage
+from django.db import models
+from django.db.models.signals import pre_delete, pre_save
+from django.dispatch import receiver
+
+from api.models.user import User
 
 
 def defaultAmountVariants():
     return [5000, 10000, 50000]
 
+
 def isArray(obj):
     return isinstance(obj, (list, tuple, array))
+
 
 class GiftCardType(models.Model):
     image = models.ImageField(default=None, upload_to='gift-card/')
@@ -29,8 +33,10 @@ class GiftCardType(models.Model):
         verbose_name_plural = '4.2. Типы подарочных карт'
 
     def __str__(self):
-        nominals = ', '.join(str(item) for item in self.amountVariants) if isArray(self.amountVariants) else 'NULL'
+        nominals = ', '.join(str(item) for item in self.amountVariants) if isArray(
+            self.amountVariants) else 'NULL'
         return f"{self.pk}. \"{self.title}\", возможные номиналы: {nominals} ₽"
+
 
 @receiver(pre_delete, sender=GiftCardType)
 def deleteImage(sender, instance, **kwargs):
@@ -51,12 +57,15 @@ def deletePreviousImage(sender, instance, **kwargs):
             if old_instance.image:
                 default_storage.delete(old_instance.image.path)
 
+
 def generateGiftCardId():
     chars = string.ascii_letters + string.digits
     return 'gift-card-' + ''.join(random.choice(chars) for _ in range(20))
 
+
 class GiftCard(models.Model):
-    promocode = models.CharField(default=generateGiftCardId, max_length=32, unique=True, db_index=True, primary_key=True)
+    promocode = models.CharField(
+        default=generateGiftCardId, max_length=32, unique=True, db_index=True, primary_key=True)
     balance = models.PositiveIntegerField(default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     cardType = models.ForeignKey(

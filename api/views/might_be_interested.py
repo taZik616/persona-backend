@@ -1,16 +1,19 @@
+import random
+from itertools import chain
+
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from api.models import Product, ProductImage
 from api.serializers import ProductSerializer
-from itertools import chain
-import random
+
 
 class MightBeInterestedView(ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
-        items = Product.objects.select_related('brand').filter(isAvailable=True)        
+        items = Product.objects.select_related(
+            'brand').filter(isAvailable=True)
 
         return self.filter_queryset(items)
 
@@ -23,7 +26,7 @@ class MightBeInterestedView(ListAPIView):
         product = queryset.filter(productId=productId).first()
         if not product:
             return Response({'error': 'Товар с данным id не был найден'}, status=400)
-        
+
         brandId = product.brand.brandId if product.brand else ''
         categoryId = product.categoryId
         subcategoryId = product.subcategoryId
@@ -45,7 +48,8 @@ class MightBeInterestedView(ListAPIView):
             collection=collection
         )[:10] if collection else []
 
-        queryset = list(chain(sameBrand, sameCategory, sameSubcategory, sameCollection))
+        queryset = list(chain(sameBrand, sameCategory,
+                        sameSubcategory, sameCollection))
         unique_items = []
         added_product_ids = set(productId) if productId else set()
 

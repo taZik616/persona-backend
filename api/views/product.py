@@ -1,12 +1,14 @@
-from api.utils.split_string import splitString
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from api.models import Product, ProductImage, ProductVariant, Category, CategoryLevel
-from api.serializers import ProductSerializer, ProductDetailSerializer
-from rest_framework.pagination import PageNumberPagination
-from rest_framework import filters
-from django_filters.rest_framework import DjangoFilterBackend
+from api.models import (Category, CategoryLevel, Product, ProductImage,
+                        ProductVariant)
+from api.serializers import ProductDetailSerializer, ProductSerializer
+from api.utils.split_string import splitString
+
 
 class ProductPagination(PageNumberPagination):
     page_size = 30
@@ -32,7 +34,7 @@ class ProductListView(ListAPIView):
     def get_queryset(self):
         items = Product.objects.select_related(
             'brand').filter(isAvailable=True, checked=True)
-        
+
         items = self.filter_queryset(items)
         withImages = ProductImage.objects.values_list('imageId', flat=True)
         items = items.filter(productId__in=withImages)
@@ -54,12 +56,14 @@ class ProductListView(ListAPIView):
             categoryIdsByGender = [str(catId) for catId in categoryIdsByGender]
             items = items.filter(categoryId__in=categoryIdsByGender)
         if sizes:
-            items = items.filter(productvariant__size__in=splitString(sizes)).distinct()
+            items = items.filter(
+                productvariant__size__in=splitString(sizes)).distinct()
         # Фильтруем по значениям `productId`
         if productIds:
             items = items.filter(productId__in=splitString(productIds))
-        
-        availableSizes = ProductVariant.objects.filter(product__in=items).values_list('size', flat=True).distinct()
+
+        availableSizes = ProductVariant.objects.filter(
+            product__in=items).values_list('size', flat=True).distinct()
         return {
             'page': self.paginate_queryset(items),
             'sizes': availableSizes,

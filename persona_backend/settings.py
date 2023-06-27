@@ -1,8 +1,10 @@
+from os import path
 from pathlib import Path
 
-from environment import DJANGO_SECRET_KEY, MEMCACHED_LOCATION, DJANGO_DB_CONFIG
-from os import path
 import urllib3
+
+from environment import DJANGO_DB_CONFIG, DJANGO_SECRET_KEY, MEMCACHED_LOCATION
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

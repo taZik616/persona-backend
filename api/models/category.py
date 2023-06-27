@@ -1,10 +1,12 @@
-from django.db import models
-from django_enumfield.enum import Enum, EnumField
-from .product import Product
-from django.dispatch import receiver
-from django.db.models.signals import pre_delete, pre_save
 from os import path, remove
+
 from django.core.files.storage import default_storage
+from django.db import models
+from django.db.models.signals import pre_delete, pre_save
+from django.dispatch import receiver
+from django_enumfield.enum import Enum, EnumField
+
+from .product import Product
 
 
 class CategoryLevel(Enum):
@@ -22,7 +24,7 @@ class Category(models.Model):
     level = EnumField(CategoryLevel)
     # С этого продукта будет вытянута картинка для демонстрации подкатегории
     subcategoryPreviewProduct = models.ForeignKey(
-        Product, on_delete=models.PROTECT, null=True
+        Product, on_delete=models.PROTECT, null=True, blank=True
     )
     # Эта картинка будет относиться к демонстрации категори
     categoryPreviewImage = models.ImageField(

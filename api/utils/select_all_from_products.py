@@ -12,6 +12,7 @@ PRODUCT_ALL_FIELDS = [
     'sostav', 'collection'
 ]
 
+
 def selectAllFromProducts(filter='Subdivision_ID != 224'):
     connection = connectToPersonaDB()
     with connection.cursor() as cursor:
@@ -23,6 +24,7 @@ def selectAllFromProducts(filter='Subdivision_ID != 224'):
         result = []
         for product in products:
             product_dict = dict(zip(PRODUCT_ALL_FIELDS, product))
-            product_dict['LastUpdated'] = product_dict['LastUpdated'].strftime('%Y-%m-%d %H:%M:%S')
+            product_dict['LastUpdated'] = product_dict['LastUpdated'].strftime(
+                '%Y-%m-%d %H:%M:%S')
             result.append(product_dict)
         return result

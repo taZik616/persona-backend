@@ -1,12 +1,15 @@
-from rest_framework.response import Response
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from django_ratelimit.decorators import ratelimit
-from rest_framework.decorators import api_view
-from api.models import DiscountCard, DiscountCardLevel
-
-from api.utils import validateAndFormatPhoneNumber, randomCardCode, connectToPersonaDB
 import uuid
+
+from django_ratelimit.decorators import ratelimit
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from api.models import DiscountCard, DiscountCardLevel
+from api.utils import (connectToPersonaDB, randomCardCode,
+                       validateAndFormatPhoneNumber)
+
 
 @ratelimit(key='ip', rate='20/min', block=False)
 @api_view(['POST'])
@@ -43,11 +46,13 @@ def LoginView(request):
                     code = randomCardCode()
                     if not DiscountCard.objects.filter(cardCode=code).exists():
                         try:
-                            cardLevel = DiscountCardLevel.objects.filter(level=1).first()
+                            cardLevel = DiscountCardLevel.objects.filter(
+                                level=1).first()
 
                             if not cardLevel:
                                 break
-                            DiscountCard.objects.create(user=user, cardCode=code, cardLevel=cardLevel)
+                            DiscountCard.objects.create(
+                                user=user, cardCode=code, cardLevel=cardLevel)
                             connection = connectToPersonaDB()
                             with connection.cursor() as cursor:
                                 phone = user.phoneNumber.replace('+', '')

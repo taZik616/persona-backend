@@ -1,12 +1,14 @@
-from PIL import Image
-import requests
 from io import BytesIO
+
+import requests
+from celery import shared_task
+from PIL import Image
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
+
 from api.models import Color
 from api.utils import connectToPersonaDB
-from celery import shared_task
 
 
 @shared_task
@@ -35,7 +37,8 @@ def syncColorsTask():
     except Exception as e:
         print(e)
         # return Response({'error': 'При синхронизации цветов со сторонней БД произошла ошибка'}, status=400)
-    
+
+
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
 def syncColors(request):

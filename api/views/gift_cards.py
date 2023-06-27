@@ -1,14 +1,14 @@
-from api.common_error_messages import SETTINGS_ERROR
-from api.utils import getServerSettings
-from rest_framework.response import Response
 import requests
 from celery import shared_task
-
-from api.models import GiftCard, GiftCardType
-from api.serializers import GiftCardSerializer, GiftCardTypeSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from api.common_error_messages import SETTINGS_ERROR
+from api.models import GiftCard, GiftCardType
+from api.serializers import GiftCardSerializer, GiftCardTypeSerializer
+from api.utils import getServerSettings
+
 
 @shared_task
 def checkGiftCardOrderStatusAndUpdateStateTask(orderId: str):
@@ -41,6 +41,7 @@ def checkGiftCardOrderStatusAndUpdateStateTask(orderId: str):
         print(e)
         return {'error': 'Не удалось узнать статус заказа'}
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getOwnMintedGiftCards(request):
@@ -50,7 +51,8 @@ def getOwnMintedGiftCards(request):
     except Exception as e:
         print(e)
         return Response({'error': 'Не удалось вернуть список созданных вами подарочных карт'}, status=400)
-    
+
+
 @api_view(['GET'])
 def getGiftCardTypes(request):
     try:
@@ -58,7 +60,8 @@ def getGiftCardTypes(request):
         return Response(GiftCardTypeSerializer(giftCardTypes, many=True, context={'request': request}).data)
     except:
         return Response({'error': 'Не удалось вернуть типы подарочных карт'}, status=400)
-    
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def mintGiftCard(request):
@@ -69,7 +72,7 @@ def mintGiftCard(request):
             return Response({'error': 'Укажите тип покупаемой карты'}, status=400)
         if not amount:
             return Response({'error': 'Укажите номинал покупаемой карты'}, status=400)
-        
+
         giftCardType = GiftCardType.objects.filter(pk=cardTypeId).first()
         if not giftCardType:
             return Response({'error': 'Данный тип карты не найден'}, status=400)
@@ -85,7 +88,7 @@ def mintGiftCard(request):
             user=request.user,
             cardType=giftCardType,
         )
-        
+
         params = {
             'userName': settings["sber_api_login"],
             'password': settings["sber_api_password"],
@@ -112,6 +115,7 @@ def mintGiftCard(request):
         })
     except:
         return Response({'error': 'Не удалось вернуть типы подарочных карт'}, status=400)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

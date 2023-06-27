@@ -1,8 +1,8 @@
-from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-from api.utils import getServerSettings
 from api.common_error_messages import SETTINGS_ERROR
+from api.utils import getServerSettings
 
 
 @api_view(['GET'])

@@ -1,13 +1,15 @@
 import mimetypes
 from uuid import uuid4
+
 import requests
+from celery import shared_task
+from django.core.files.base import ContentFile
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
-from django.core.files.base import ContentFile
+
 from api.models import Brand
 from api.utils import connectToPersonaDB
-from celery import shared_task
 
 
 @shared_task

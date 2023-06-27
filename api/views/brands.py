@@ -1,9 +1,9 @@
-from ..common_error_messages import GENDER_MUST_BE, ONLY_ADMIN
-from ..serializers import BrandSerializer
-from ..models import Brand
-
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from ..common_error_messages import GENDER_MUST_BE, ONLY_ADMIN
+from ..models import Brand
+from ..serializers import BrandSerializer
 
 
 class BrandsView(APIView):
@@ -15,7 +15,8 @@ class BrandsView(APIView):
         if 'brandId' in request.data:
             try:
                 brand = Brand.objects.get(brandId=request.data['brandId'])
-                serialized_data = BrandSerializer(brand, many=False, context={'request': request}).data
+                serialized_data = BrandSerializer(
+                    brand, many=False, context={'request': request}).data
                 return Response(serialized_data)
             except Brand.DoesNotExist:
                 return Response({'error': 'Бренд с данным идентификатором не найден'}, status=400)
@@ -32,7 +33,8 @@ class BrandsView(APIView):
                         return Response({'error': GENDER_MUST_BE}, status=400)
 
                     queryset = queryset.filter(gender__in=[gender, 'both'])
-                serialized_data = BrandSerializer(queryset, many=True, context={'request': request}).data
+                serialized_data = BrandSerializer(
+                    queryset, many=True, context={'request': request}).data
                 return Response(serialized_data)
             except:
                 return Response({'error': 'Не удалось вернуть список брендов'}, status=400)

@@ -1,15 +1,15 @@
 import requests
-from api.common_error_messages import SETTINGS_ERROR
-
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from api.common_error_messages import SETTINGS_ERROR
+from api.models import GiftCard, Order, ProductVariant, Promocode
 from api.serializers import UserInfoSerializer
-from api.utils import splitString, selectAllFromProducts, getServerSettings
-from api.models import ProductVariant, Order, Promocode, GiftCard
+from api.utils import getServerSettings, selectAllFromProducts, splitString
 from api.views.check_order_status import checkOrderStatusAndUpdateStateTask
 from api.views.order_personal_discount_calc import orderPersonalDiscountCalc
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -27,16 +27,18 @@ def createOrder(request):
         return Response({'error': 'Подарочноя карта временно заморожена, после проверки сделанного заказа вы сможете продолжить ей пользоваться'}, status=400)
     if giftCard and not giftCard.isActive:
         return Response({'error': 'Карта не активирована, для активации нужно оплатить заказ'}, status=400)
-    orderData = orderPersonalDiscountCalc(productVariantIds, request.user, promocode, request)
+    orderData = orderPersonalDiscountCalc(
+        productVariantIds, request.user, promocode, request)
 
     if orderData.get('error'):
         return Response(orderData, status=400)
     orderPrice = orderData['priceWithPersonalDiscount'] * 100
-    
+
     createdOrder: Order
     try:
         productVariantIds = splitString(productVariantIds)
-        variants = ProductVariant.objects.filter(uniqueId__in=productVariantIds)
+        variants = ProductVariant.objects.filter(
+            uniqueId__in=productVariantIds)
         if not variants.exists():
             return Response({'error': 'Ни один из указанных товаров не был найден'}, status=400)
         if variants.count() < len(productVariantIds):
@@ -44,7 +46,8 @@ def createOrder(request):
         if variants.filter(isAvailable=False).exists():
             return Response({'error': 'Не все выбранные товары доступны для оформления'}, status=400)
 
-        productsData = selectAllFromProducts(f'Message_ID in ({",".join(productVariantIds)})')
+        productsData = selectAllFromProducts(
+            f'Message_ID in ({",".join(productVariantIds)})')
 
         settings = getServerSettings()
         if not settings:
@@ -63,7 +66,8 @@ def createOrder(request):
         if deliveryCost:
             orderPrice += deliveryCost * 100
 
-        articles = [str(prod['code'] if prod['code'] else prod['Message_ID']) for prod in productsData]
+        articles = [str(prod['code'] if prod['code'] else prod['Message_ID'])
+                    for prod in productsData]
         params = {
             'userName': settings["sber_api_login"],
             'password': settings["sber_api_password"],
@@ -79,7 +83,8 @@ def createOrder(request):
         data = requests.get(registerUrl, params=params, verify=False).json()
         if data.get('orderId'):
             createdOrder.orderSberId = data['orderId']
-            createdOrder.usedPromocode = Promocode.objects.filter(code=promocode).first()
+            createdOrder.usedPromocode = Promocode.objects.filter(
+                code=promocode).first()
             createdOrder.save()
 
             if giftCard:

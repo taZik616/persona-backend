@@ -1,8 +1,9 @@
-from django.db import models
-from django.dispatch import receiver
-from django.db.models.signals import pre_delete, pre_save
 from os import path, remove
+
 from django.core.files.storage import default_storage
+from django.db import models
+from django.db.models.signals import pre_delete, pre_save
+from django.dispatch import receiver
 
 
 class AnotherImage(models.Model):
@@ -14,7 +15,7 @@ class AnotherImage(models.Model):
 
     def __str__(self):
         return str(self.image).replace('another-images/', '')
-    
+
 
 @receiver(pre_delete, sender=AnotherImage)
 def deleteImage(sender, instance, **kwargs):

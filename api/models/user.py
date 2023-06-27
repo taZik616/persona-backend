@@ -1,8 +1,12 @@
 from typing import Any
+
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+                                        PermissionsMixin)
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
 from .product import Product, ProductVariant
 from .promocode import Promocode
+
 
 class UserManager(BaseUserManager):
     def create_user(self, password=None, md5password=None, **extra_fields):

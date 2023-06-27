@@ -1,8 +1,10 @@
+from datetime import date
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
 from api.models import Promocode, User
-from datetime import date
 from api.serializers import PromocodeSerializer
 
 
@@ -21,7 +23,7 @@ def checkPromocode(promocode: str, user: User):
 
         if user.usedPromocodes.filter(code=promocode.code).exists():
             return {'error': 'Вы уже использовали этот промокод'}
-        
+
         return {
             'success': 'Промокод прошел проверку',
             'data': PromocodeSerializer(promocode).data
@@ -29,6 +31,7 @@ def checkPromocode(promocode: str, user: User):
     except Exception as e:
         print(str(e))
         return {'error': 'Ошибка сервера, попробуйте позже'}
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

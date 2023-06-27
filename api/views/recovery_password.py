@@ -1,9 +1,10 @@
-from rest_framework.response import Response
+from django.core.cache import cache
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from api.models.user import User
-from api.utils import validateAndFormatPhoneNumber, sendCodeToPhone, specialEncodePassword, connectToPersonaDB
-from django.core.cache import cache
+from api.utils import (connectToPersonaDB, sendCodeToPhone,
+                       specialEncodePassword, validateAndFormatPhoneNumber)
 
 
 @api_view(['POST'])
@@ -77,13 +78,14 @@ def RecoveryPasswordCheckView(request):
     except:
         return Response({"error": 'Не удалось выполнить проверку'}, status=400)
 
+
 @api_view(['POST'])
 def RecoveryPasswordCompleteView(request):
     try:
         phoneNumber = request.data.get('phoneNumber')
         supposedCode = request.data.get('supposedCode')
         newPassword = request.data.get('newPassword')
-        
+
         if not phoneNumber or not supposedCode or not newPassword:
             return Response({
                 "error": "Для завершения восстановления, вам нужно указать: номер телефона, предполагаемый код, новый пароль"
@@ -98,12 +100,13 @@ def RecoveryPasswordCompleteView(request):
         state = cache.get(f'rec-pass-{formattedPhoneNumber}')
         if state is None:
             return Response({"error": 'Сначала нужно начать процесс восстановления'}, status=400)
-        
+
         codeMd5 = state.get('codeMd5')
         supposedCodeMd5 = specialEncodePassword(supposedCode)
 
         if codeMd5 == supposedCodeMd5:
-            user = User.objects.filter(phoneNumber=formattedPhoneNumber).first()
+            user = User.objects.filter(
+                phoneNumber=formattedPhoneNumber).first()
             if not user:
                 return Response({"error": 'Такого пользователя не существует'}, status=400)
 

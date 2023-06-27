@@ -1,9 +1,10 @@
+from celery import shared_task
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
+
 from api.models import DiscountCard, DiscountCardLevel, User
 from api.utils import connectToPersonaDB, validateAndFormatPhoneNumber
-from celery import shared_task
 
 
 @shared_task
@@ -42,16 +43,18 @@ def syncDiscountCardsTask():
             for discountCard in discountCards:
                 phoneNumber, cardCode, cardTypeEncoded = discountCard
                 if phoneNumber.startswith('7'):
-                    phoneNumber=f"+{phoneNumber}"
+                    phoneNumber = f"+{phoneNumber}"
 
                 res = validateAndFormatPhoneNumber(phoneNumber)
                 if not res['success']:
                     continue
                 formattedPhoneNumber: str = res.get('formattedPhoneNumber')
 
-                user = User.objects.filter(phoneNumber=formattedPhoneNumber).first()
+                user = User.objects.filter(
+                    phoneNumber=formattedPhoneNumber).first()
                 if user:
-                    cardLevel = DiscountCardLevel.objects.filter(encodedValue=cardTypeEncoded).first()
+                    cardLevel = DiscountCardLevel.objects.filter(
+                        encodedValue=cardTypeEncoded).first()
                     if cardLevel:
                         try:
                             DiscountCard.objects.update_or_create(
@@ -66,7 +69,8 @@ def syncDiscountCardsTask():
                             print(e)
     except Exception as e:
         print(e)
-    
+
+
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
 def syncDiscountCards(request):

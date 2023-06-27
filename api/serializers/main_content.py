@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
-from ..models import MainContent, MainSwiperImage, Brand, Product, ProductImage, Category
-from . import CategorySerializer, BrandSerializer
+from ..models import (Brand, Category, MainContent, MainSwiperImage, Product,
+                      ProductImage)
+from . import BrandSerializer, CategorySerializer
+
 
 class MainSwiperImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,10 +26,13 @@ class MainContentSerializer(serializers.ModelSerializer):
                     itemId = f"{instance.gender}-{index}"
                     match contentPart.type:
                         case 'CategoriesList':
-                            category = Category.objects.filter(categoryId=item['subcategoryId']).first()
-                            productsByCategory = Product.objects.filter(subcategoryId=item['subcategoryId']).order_by('?')
+                            category = Category.objects.filter(
+                                categoryId=item['subcategoryId']).first()
+                            productsByCategory = Product.objects.filter(
+                                subcategoryId=item['subcategoryId']).order_by('?')
                             for product in productsByCategory:
-                                prodImage = ProductImage.objects.filter(imageId=product.productId).first()
+                                prodImage = ProductImage.objects.filter(
+                                    imageId=product.productId).first()
                                 if prodImage:
                                     preparedItems.append({
                                         "id": itemId,
@@ -40,7 +45,8 @@ class MainContentSerializer(serializers.ModelSerializer):
                                     })
                                     break
                         case 'BrandsSwiper':
-                            brand = Brand.objects.filter(brandId=item['brandId']).first()
+                            brand = Brand.objects.filter(
+                                brandId=item['brandId']).first()
                             preparedItems.append({
                                 "id": itemId,
                                 "brand": BrandSerializer(brand, context={'request': request}).data,
@@ -51,10 +57,13 @@ class MainContentSerializer(serializers.ModelSerializer):
                                 }
                             })
                         case 'BrandsList':
-                            brand = Brand.objects.filter(brandId=item['brandId']).first()
-                            productsByBrand = Product.objects.filter(brand=brand).order_by('?')
+                            brand = Brand.objects.filter(
+                                brandId=item['brandId']).first()
+                            productsByBrand = Product.objects.filter(
+                                brand=brand).order_by('?')
                             for product in productsByBrand:
-                                prodImage = ProductImage.objects.filter(imageId=product.productId).first()
+                                prodImage = ProductImage.objects.filter(
+                                    imageId=product.productId).first()
                                 if prodImage:
                                     preparedItems.append({
                                         "id": itemId,

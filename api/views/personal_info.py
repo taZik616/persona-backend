@@ -1,9 +1,8 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from rest_framework.permissions import IsAuthenticated
 from api.common_error_messages import translateError
-
 from api.serializers import UserInfoSerializer
 from api.utils import connectToPersonaDB
 

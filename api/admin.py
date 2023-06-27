@@ -1,10 +1,11 @@
 from django.contrib import admin
 
-from api.models import Brand, MainContent, AnotherImage, User, \
-    Category, ProductVariant, Product, ProductImage, \
-    FavoriteItem, BasketItem, OtherContent, MainSwiperImage, Color, \
-    Collection, DiscountCard, DiscountCardLevel, Promocode, Order, \
-    ServerSettings, FastOrder, GiftCardType, GiftCard
+from api.models import (AnotherImage, BasketItem, Brand, Category, Collection,
+                        Color, DiscountCard, DiscountCardLevel, FastOrder,
+                        FavoriteItem, GiftCard, GiftCardType, MainContent,
+                        MainSwiperImage, Order, OtherContent, Product,
+                        ProductImage, ProductVariant, Promocode,
+                        ServerSettings, User)
 
 admin.site.register(User)
 admin.site.register(Brand)
@@ -23,12 +24,15 @@ admin.site.register(ServerSettings)
 admin.site.register(GiftCard)
 admin.site.register(GiftCardType)
 
+
 @admin.register(FastOrder)
 class FastOrderAdmin(admin.ModelAdmin):
     ordering = ('-orderId',)
-    list_display = ['orderId', 'orderSberId', 'status', 'phoneNumber', 'address']
+    list_display = ['orderId', 'orderSberId',
+                    'status', 'phoneNumber', 'address']
     search_fields = ('orderId', 'orderSberId', 'phoneNumber')
     list_per_page = 150
+
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -36,6 +40,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ['orderId', 'orderSberId', 'status', 'user', 'address']
     search_fields = ('orderId', 'orderSberId', 'user__phoneNumber')
     list_per_page = 150
+
 
 @admin.register(Color)
 class ColorAdmin(admin.ModelAdmin):

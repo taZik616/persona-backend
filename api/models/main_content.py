@@ -1,6 +1,6 @@
 from django.db import models
+
 from api.constants import GENDERS, MAIN_CONTENTS
-from django.db import models
 
 
 class MainSwiperImage(models.Model):
@@ -15,6 +15,7 @@ class MainSwiperImage(models.Model):
 
 def defaultItemsValue():
     return []
+
 
 class OtherContent(models.Model):
     type = models.CharField(max_length=200, choices=MAIN_CONTENTS)

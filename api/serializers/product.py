@@ -1,9 +1,10 @@
-from api.utils import splitString
 from rest_framework import serializers
 
-from api.models import Product, ProductImage, ProductVariant, Color, Category, CategoryLevel, Collection
-from api.serializers.collection import CollectionSerializer
+from api.models import (Category, CategoryLevel, Collection, Color, Product,
+                        ProductImage, ProductVariant)
 from api.serializers.brand import BrandSerializer
+from api.serializers.collection import CollectionSerializer
+from api.utils import splitString
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -23,12 +24,12 @@ class ProductSerializer(serializers.ModelSerializer):
             level=CategoryLevel.CATEGORY,
             categoryId=instance.categoryId
         ).first().gender
-        return gender if gender  else ''
-    
+        return gender if gender else ''
+
     def get_collections(self, instance):
         collectionIds = splitString(instance.collection)
         collections = Collection.objects.filter(collectionId__in=collectionIds)
-        
+
         return CollectionSerializer(collections, many=True).data
 
     class Meta:
@@ -82,12 +83,12 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             level=CategoryLevel.CATEGORY,
             categoryId=instance.categoryId
         ).first().gender
-        return gender if gender  else ''
+        return gender if gender else ''
 
     def get_collections(self, instance):
         collectionIds = splitString(instance.collection)
         collections = Collection.objects.filter(collectionId__in=collectionIds)
-        
+
         return CollectionSerializer(collections, many=True).data
 
     class Meta:
@@ -95,6 +96,6 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         fields = (
             'productId', 'productName', 'price', 'priceGroup', 'gender',
             'onlyOneVariant', 'collections', 'isAvailable', 'description',
-            'manufacturer', 'country', 'podklad', 'sostav', 
+            'manufacturer', 'country', 'podklad', 'sostav',
             'brand', 'images', 'variants', 'discountPercent', 'article'
         )

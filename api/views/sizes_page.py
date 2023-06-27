@@ -1,6 +1,7 @@
+from django.core.cache import cache
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.core.cache import cache
+
 from api.common_error_messages import ONLY_ADMIN
 
 

@@ -1,5 +1,6 @@
-from rest_framework.response import Response
 import requests
+from rest_framework.response import Response
+
 from api.common_error_messages import SEND_VERIFY_ERROR
 from environment import SMS_RU_API_KEY
 

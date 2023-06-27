@@ -1,5 +1,6 @@
-from PIL import Image
 from io import BytesIO
+
+from PIL import Image
 
 
 def compressImage(respContent: bytes, format: str):

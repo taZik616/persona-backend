@@ -1,14 +1,16 @@
 import re
-import requests
-from api.common_error_messages import SETTINGS_ERROR
 
+import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.utils import selectAllFromProducts, getServerSettings, validateAndFormatPhoneNumber
-from api.models import ProductVariant, FastOrder
-from api.views.check_order_status import checkOrderStatusAndUpdateStateTask
+from api.common_error_messages import SETTINGS_ERROR
+from api.models import FastOrder, ProductVariant
 from api.serializers import ProductSerializer, ProductVariantSerializer
+from api.utils import (getServerSettings, selectAllFromProducts,
+                       validateAndFormatPhoneNumber)
+from api.views.check_order_status import checkOrderStatusAndUpdateStateTask
+
 
 @api_view(['POST'])
 def createFastOrder(request):
@@ -35,7 +37,8 @@ def createFastOrder(request):
         return Response({"error": res.get('error')}, status=400)
     formattedPhoneNumber = res.get('formattedPhoneNumber')
 
-    orderPrice = (variant.price - variant.price / 100 * variant.discountPercent) * 100
+    orderPrice = (variant.price - variant.price /
+                  100 * variant.discountPercent) * 100
 
     createdOrder: FastOrder
     try:
@@ -44,7 +47,7 @@ def createFastOrder(request):
         settings = getServerSettings()
         if not settings:
             return Response({'error': SETTINGS_ERROR}, status=400)
-        
+
         createdOrder = FastOrder.objects.create(
             productInfo={
                 'product': ProductSerializer(variant.product, context={'request': request}).data,

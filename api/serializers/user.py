@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import User, BasketItem, FavoriteItem
+from ..models import BasketItem, FavoriteItem, User
 from .product import ProductSerializer, ProductVariantSerializer
 
 

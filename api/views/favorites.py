@@ -1,8 +1,9 @@
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
-from api.serializers import FavoriteItemsSerializer
+
 from api.models import FavoriteItem, Product
+from api.serializers import FavoriteItemsSerializer
 
 
 class FavoritesView(APIView):

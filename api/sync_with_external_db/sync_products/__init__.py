@@ -1,9 +1,10 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
+
+from .fast import productSyncFast
 from .hard import productSyncHard
 from .mid import productSyncMid
-from .fast import productSyncFast
 
 # Варианты синхронизации:
 # 1. Только по дате обновления:

@@ -1,0 +1,15 @@
+{
+  "[python]": {
+    "editor.formatOnSave": true,
+    "analysis.autoImportCompletions": true,
+    "formatting.provider": "autopep8",
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
+  "isort.args": ["--profile", "black"],
+  "python.linting.pylintEnabled": true,
+  "python.linting.pylintArgs": ["--rcfile", ".pylintrc"],
+  "python.formatting.provider": "none"
+}

@@ -1,10 +1,10 @@
+from celery import shared_task
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from api.models import Category, CategoryLevel
 from api.utils import connectToPersonaDB
-from celery import shared_task
 
 
 @shared_task
@@ -64,6 +64,8 @@ def syncCategoriesTask():
     except Exception as e:
         print(e)
         # return Response({'error': 'При синхронизации категорий и подкатегорий со сторонней БД произошла ошибка'}, status=400)
+
+
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
 def syncCategories(request):

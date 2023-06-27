@@ -3,6 +3,7 @@ ONLY_ADMIN = 'Вы не администратор'
 SEND_VERIFY_ERROR = "На этот номер не удалось отправить звонок с кодом"
 SETTINGS_ERROR = 'На сервере возникла проблема с настройками'
 
+
 def translateError(err: str):
     if err == 'Enter a valid email address.':
         return 'Email адрес не прошел проверку'

@@ -33,6 +33,8 @@ null - значит промокод действует на все товары
         verbose_name_plural = 'Промокоды'
 
     def __str__(self):
-        discountPercent = self.benefit['discountPercent'] if self.benefit.get('discountPercent') else 'Не указанна'
-        discountSum = f"{self.benefit['discountSum']} ₽" if self.benefit.get('discountSum') else 'Скидку определяют только проценты'
+        discountPercent = self.benefit['discountPercent'] if self.benefit.get(
+            'discountPercent') else 'Не указанна'
+        discountSum = f"{self.benefit['discountSum']} ₽" if self.benefit.get(
+            'discountSum') else 'Скидку определяют только проценты'
         return f"Код: {self.code}, Скидка в процентах: {discountPercent}, Скидка в рублях: {discountSum}"

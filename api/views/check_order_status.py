@@ -1,18 +1,20 @@
+from functools import reduce
+
 import requests
-from api.models.discount_card import DiscountCard
-from api.serializers.order import OrderSerializer
+from celery import shared_task
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from api.common_error_messages import SETTINGS_ERROR
+from api.models import FastOrder, GiftCard, Order
+from api.models.discount_card import DiscountCard
+from api.serializers.order import OrderSerializer
 from api.utils import getServerSettings
-from celery import shared_task
-from api.models import Order, FastOrder, GiftCard
-from functools import reduce
+
 
 @shared_task
-def checkOrderStatusAndUpdateStateTask(orderId, isFastOrder = False, giftCardUsed = False, giftCardPromocode = ''):
+def checkOrderStatusAndUpdateStateTask(orderId, isFastOrder=False, giftCardUsed=False, giftCardPromocode=''):
     '''
     `orderId` - идентификатор который выдает сбербанк
     '''
@@ -36,28 +38,36 @@ def checkOrderStatusAndUpdateStateTask(orderId, isFastOrder = False, giftCardUse
         if data.get('orderStatus') != None and data.get('orderNumber') != None:
             order = None
             if isFastOrder:
-                order = FastOrder.objects.filter(orderId=data['orderNumber']).first()
+                order = FastOrder.objects.filter(
+                    orderId=data['orderNumber']).first()
             else:
-                order = Order.objects.filter(orderId=data['orderNumber']).first()
+                order = Order.objects.filter(
+                    orderId=data['orderNumber']).first()
             if not order:
                 return {'error': 'Не удалось найти заказ'}
             # После прошествия 20 мин разблокируем карту
-            giftCard = GiftCard.objects.filter(promocode=giftCardPromocode).first()
+            giftCard = GiftCard.objects.filter(
+                promocode=giftCardPromocode).first()
             if (giftCard and giftCardUsed and giftCard.isBlocked) or (giftCard and data['orderStatus'] == 2 and giftCard.isBlocked):
                 giftCard.isBlocked = False
-                totalPersonalDiscount = reduce(lambda prev, a: prev + int(a.get('personalDiscountInRub', 0)), order.productsInfo, 0)
-                giftCard.balance = int(giftCard.balance) - int(totalPersonalDiscount)
+                totalPersonalDiscount = reduce(
+                    lambda prev, a: prev + int(a.get('personalDiscountInRub', 0)), order.productsInfo, 0)
+                giftCard.balance = int(giftCard.balance) - \
+                    int(totalPersonalDiscount)
                 giftCard.save()
             if order.status not in ['Delivery', 'Received', 'AlreadyPaid']:
                 match data['orderStatus']:
                     case 2:
                         if not isFastOrder:
                             if order.usedPromocode:
-                                order.user.usedPromocodes.add(order.usedPromocode)
-                                discountCard = DiscountCard.objects.filter(user=order.user).first()
+                                order.user.usedPromocodes.add(
+                                    order.usedPromocode)
+                                discountCard = DiscountCard.objects.filter(
+                                    user=order.user).first()
                                 if discountCard:
                                     # Ну мне лень еще раз реализовывать подсчет цены
-                                    discountCard.purchaseTotal += OrderSerializer(order).data['totalSum']
+                                    discountCard.purchaseTotal += OrderSerializer(
+                                        order).data['totalSum']
                                     discountCard.save()
                                 order.user.save()
                         order.status = 'AlreadyPaid'
@@ -71,6 +81,7 @@ def checkOrderStatusAndUpdateStateTask(orderId, isFastOrder = False, giftCardUse
     except Exception as e:
         print(e)
         return {'error': 'Не удалось узнать статус заказа'}
+
 
 @api_view(['POST'])
 def checkOrderStatus(request):
@@ -86,16 +97,19 @@ def checkOrderStatus(request):
     else:
         return Response(data)
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def updateAllOwnOrdersStatus(request):
     try:
         orders = Order.objects.filter(user=request.user)
-        giftBlockedCards = GiftCard.objects.filter(isBlocked=True, user=request.user)
+        giftBlockedCards = GiftCard.objects.filter(
+            isBlocked=True, user=request.user)
         for order in orders:
             # Я бы мог в ордер записывать промокод подарочной карты но я это поздно понял(когда наполнил БД )
             for blockedCard in giftBlockedCards:
-                checkOrderStatusAndUpdateStateTask(order.orderSberId, giftCardPromocode=blockedCard.promocode)
+                checkOrderStatusAndUpdateStateTask(
+                    order.orderSberId, giftCardPromocode=blockedCard.promocode)
             #
             data = checkOrderStatusAndUpdateStateTask(order.orderSberId)
             if data.get('error'):

@@ -1,10 +1,10 @@
+from celery import shared_task
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from api.models.user import User
 from api.utils import connectToPersonaDB
-from celery import shared_task
 
 
 @shared_task
@@ -18,7 +18,7 @@ def syncUsersTask():
                 userId = int(row[0])
                 lang = row[1]
                 md5pass = row[2]
-                phoneNumber:str = row[3]
+                phoneNumber: str = row[3]
                 fullName = row[4]
                 email = row[5]
                 dob = row[6]
@@ -29,7 +29,7 @@ def syncUsersTask():
                 lastName = name_parts[1] if len(name_parts) > 1 else ""
 
                 if phoneNumber.startswith('7'):
-                    phoneNumber=f"+{phoneNumber}"
+                    phoneNumber = f"+{phoneNumber}"
 
                     userData = {
                         'userId': userId,
@@ -49,7 +49,7 @@ def syncUsersTask():
         return Response({'success': 'Синхронизация прошла успешно'})
     except:
         return Response({'error': 'Ошибка синхронизации'})
-    
+
 
 @api_view(['POST'])
 @permission_classes([IsAdminUser])

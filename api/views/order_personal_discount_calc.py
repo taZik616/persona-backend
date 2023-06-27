@@ -1,30 +1,33 @@
-from api.views.check_promocode import checkPromocode
-
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from api.models import (DiscountCard, GiftCard, Product, ProductVariant,
+                        Promocode, User)
 from api.serializers import ProductSerializer, ProductVariantSerializer
-from api.utils import splitString, getWomenAndMenCats
-from api.models import ProductVariant, DiscountCard, Promocode, User, Product, GiftCard
+from api.utils import getWomenAndMenCats, splitString
+from api.views.check_promocode import checkPromocode
 
 
-def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str, request = None):
+def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str, request=None):
     try:
         if not productVariantIds:
             return {'error': 'Укажите товары для того чтобы узнать сколько составит цена со скидкой'}
 
         productVariantIds = splitString(productVariantIds)
 
-        variants = ProductVariant.objects.filter(uniqueId__in=productVariantIds)
-        productIdsForVariants = [productId for productId in variants.values_list('product', flat=True)]
+        variants = ProductVariant.objects.filter(
+            uniqueId__in=productVariantIds)
+        productIdsForVariants = [
+            productId for productId in variants.values_list('product', flat=True)]
         products = Product.objects.filter(productId__in=productIdsForVariants)
 
         if promocode and 'gift-card-' not in promocode:
             promoCheckRes = checkPromocode(promocode, user)
             if promoCheckRes.get('error'):
                 return promoCheckRes
-        giftCard = GiftCard.objects.filter(promocode=promocode, isActive=True).first()
+        giftCard = GiftCard.objects.filter(
+            promocode=promocode, isActive=True).first()
         promocode = Promocode.objects.filter(code=promocode).first()
 
         preparedProductsData = []
@@ -50,7 +53,7 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
                     'variant': ProductVariantSerializer(variant).data,
                     'personalDiscountInRub': int(personalDiscountInRub)
                 })
-        elif promocode: # Промокод найден и действителен
+        elif promocode:  # Промокод найден и действителен
             productFilters = promocode.productFilters or {}
             subcategoryIds = productFilters.get('subcategoryIds')
             categoryId = productFilters.get('categoryId')
@@ -64,37 +67,45 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
                 promoProducts = promoProducts.filter(productId__in=productIds)
             else:
                 if subcategoryIds:
-                    promoProducts = promoProducts.filter(subcategoryId__in=subcategoryIds)
+                    promoProducts = promoProducts.filter(
+                        subcategoryId__in=subcategoryIds)
                 if categoryId:
                     promoProducts = promoProducts.filter(categoryId=categoryId)
                 if brandIds:
-                    promoProducts = promoProducts.filter(brand__brandId__in=brandIds)
+                    promoProducts = promoProducts.filter(
+                        brand__brandId__in=brandIds)
                 if priceGroup:
                     promoProducts = promoProducts.filter(priceGroup=priceGroup)
                 if gender:
                     [menCats, womenCats] = getWomenAndMenCats()
                     if gender == 'men':
-                        promoProducts = promoProducts.filter(categoryId__in=menCats)
+                        promoProducts = promoProducts.filter(
+                            categoryId__in=menCats)
                     elif gender == 'women':
-                        promoProducts = promoProducts.filter(categoryId__in=womenCats)
+                        promoProducts = promoProducts.filter(
+                            categoryId__in=womenCats)
             if promoProducts.count() <= 0:
                 return {'error': 'Ни к одному товару нельзя применить промокод промо-кода'}
             for variant in variants:
                 parentId = variant.product.productId
-                participatesInPromo = promoProducts.filter(productId=parentId).exists()
+                participatesInPromo = promoProducts.filter(
+                    productId=parentId).exists()
                 if participatesInPromo:
                     price = variant.price - variant.price / 100 * variant.discountPercent
 
-                    discountPercent = promocode.benefit.get('discountPercent', 0)
+                    discountPercent = promocode.benefit.get(
+                        'discountPercent', 0)
                     discountSum = promocode.benefit.get('discountSum', 0)
-                    startSumForDiscountSum = promocode.benefit.get('startSumForDiscountSum', 0)
+                    startSumForDiscountSum = promocode.benefit.get(
+                        'startSumForDiscountSum', 0)
                     personalDiscountInRub = 0
                     if discountPercent:
                         if not discountSum:
                             personalDiscountInRub = price / 100 * discountPercent
                         else:
                             if price >= discountSum:
-                                personalDiscountInRub = min(price / 100 * discountPercent, discountSum)
+                                personalDiscountInRub = min(
+                                    price / 100 * discountPercent, discountSum)
                     elif discountSum and price >= startSumForDiscountSum:
                         personalDiscountInRub = price / 100 * discountPercent
                     elif discountSum:
@@ -152,19 +163,15 @@ def orderPersonalDiscountCalc(productVariantIds: str, user: User, promocode: str
         return {'error': 'При расчете персональной скидки возникла ошибка'}
 
 
-
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def orderPersonalDiscountCalcView(request):
     productVariantIds = request.GET.get('productVariantIds', '')
     promocode = request.GET.get('promocode', '')
-    data = orderPersonalDiscountCalc(productVariantIds, request.user, promocode, request)
+    data = orderPersonalDiscountCalc(
+        productVariantIds, request.user, promocode, request)
 
     if isinstance(data, dict) and data.get('error'):
         return Response(data, status=400)
     else:
         return Response(data)
-
-
-    

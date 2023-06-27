@@ -10,11 +10,13 @@ class OrderSerializer(serializers.ModelSerializer):
         # Ваша логика для получения URL изображения
         price = 0
         for el in instance.productsInfo:
-            price += el['variant']['price'] - el['variant']['price'] / 100 * el['variant']['discountPercent']
+            price += el['variant']['price'] - el['variant']['price'] / \
+                100 * el['variant']['discountPercent']
             if el.get('personalDiscountInRub'):
                 price -= el['personalDiscountInRub']
         return price
 
     class Meta:
         model = Order
-        fields = ['orderId', 'orderSberId', 'status', 'address', 'totalSum', 'status', 'productsInfo']
+        fields = ['orderId', 'orderSberId', 'status',
+                  'address', 'totalSum', 'status', 'productsInfo']

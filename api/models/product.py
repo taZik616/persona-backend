@@ -1,8 +1,10 @@
-from django.db import models
-from django.dispatch import receiver
-from django.db.models.signals import pre_delete
-from .brand import Brand
 from os import path, remove
+
+from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+
+from .brand import Brand
 
 
 class Product(models.Model):

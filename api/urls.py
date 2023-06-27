@@ -1,7 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 
-from . import views
 from . import sync_with_external_db as sync
+from . import views
 
 sync_urls = [
     path('users', sync.syncUsers),

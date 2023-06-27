@@ -1,9 +1,12 @@
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from datetime import datetime
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from api.models.user import User
 
-from ..utils import connectToPersonaDB, validateAndFormatPhoneNumber, specialEncodePassword, ActionLimiter, sendCodeToPhone
+from ..utils import (ActionLimiter, connectToPersonaDB, sendCodeToPhone,
+                     specialEncodePassword, validateAndFormatPhoneNumber)
 
 INTERVAL = 60*60
 registryLimiter = ActionLimiter('registry-', 6, INTERVAL, INTERVAL)
@@ -29,7 +32,7 @@ def RegistrySendCodeView(request):
     if not res['success']:
         return Response({"error": res.get('error')}, status=400)
 
-    formattedPhoneNumber:str = res.get('formattedPhoneNumber')
+    formattedPhoneNumber: str = res.get('formattedPhoneNumber')
     firstName = request.data.get('firstName', '')
     lastName = request.data.get('lastName', '')
 
@@ -94,7 +97,9 @@ def RegistrySendCodeView(request):
                 "error": f"Ошибка сервера"
             }, status=400)
 
+
 resendLimiter = ActionLimiter('registry-resend-code-', 1, 60*5, 60*5)
+
 
 @api_view(['POST'])
 def RegistryResendCodeView(request):
@@ -127,7 +132,7 @@ def RegistryResendCodeView(request):
                 return Response({'error': 'Аккаунт еще не был создан'}, status=400)
             if user.isPhoneNumberVerified:
                 return Response({'error': 'Пользователь уже подтвердил свой номер'}, status=400)
-            
+
             codeSendRes = sendCodeToPhone(formattedPhoneNumber)
 
             code = codeSendRes.get('code')
@@ -140,7 +145,8 @@ def RegistryResendCodeView(request):
             user.save()
             resendLimiter.increment(addressIP)
 
-            cursor.execute(f"UPDATE User SET Password = '{md5password}' WHERE User_ID = '{user.userId}';")
+            cursor.execute(
+                f"UPDATE User SET Password = '{md5password}' WHERE User_ID = '{user.userId}';")
 
             return Response({
                 "success": "На номер был отправлен новый пароль",
@@ -148,4 +154,4 @@ def RegistryResendCodeView(request):
             })
         except Exception as e:
             print(str(e))
-            return Response({"error": f"Ошибка сервера" }, status=400)
+            return Response({"error": f"Ошибка сервера"}, status=400)

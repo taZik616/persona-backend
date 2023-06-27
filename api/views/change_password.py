@@ -1,9 +1,9 @@
-from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from api.utils import connectToPersonaDB
 from api.models import User
+from api.utils import connectToPersonaDB
 
 
 @api_view(['POST'])

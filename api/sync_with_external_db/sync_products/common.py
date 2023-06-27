@@ -1,5 +1,7 @@
 import re
+
 from pytz import utc
+
 from api.models import Brand, Category
 from api.utils import connectToPersonaDB
 
@@ -28,7 +30,7 @@ def prepareFields(row: tuple, isSingle: bool = False, podklads: dict = {}, sosta
     discount = re.search(r"\d+%", priceGroup) if priceGroup else ''
     if discount:
         discount = int(discount.group().strip("%"))
-    else: 
+    else:
         discount = 0
 
     categoryId = Category.objects.get(categoryId=subcategoryId).parentId
@@ -72,8 +74,8 @@ def prepareVariantFields(row: tuple):
     discount = re.search(r"\d+%", priceGroup) if priceGroup else ''
     if discount:
         discount = int(discount.group().strip("%"))
-    else: 
-        discount =  0
+    else:
+        discount = 0
     return {
         'uniqueId': uniqueId,
         'price': price,

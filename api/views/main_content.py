@@ -1,5 +1,5 @@
-from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from api.common_error_messages import GENDER_MUST_BE
 from api.models import MainContent
