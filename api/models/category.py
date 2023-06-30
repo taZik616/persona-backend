@@ -16,7 +16,7 @@ class CategoryLevel(Enum):
 
 class Category(models.Model):
     categoryId = models.AutoField(primary_key=True, unique=True, verbose_name='Идентификатор')
-    parentId = models.CharField(default='', max_length=200, verbose_name='Родительский')
+    parentId = models.CharField(default='', max_length=200, verbose_name='Родительский идентификатор')
     name = models.CharField(default='', max_length=100, verbose_name='Название')
     description = models.CharField(default='', max_length=5000, blank=True, verbose_name='Описание')
     keywords = models.TextField(default='', max_length=50000, blank=True, verbose_name='Ключевые слова')
@@ -24,7 +24,7 @@ class Category(models.Model):
     level = EnumField(CategoryLevel)
     # С этого продукта будет вытянута картинка для демонстрации подкатегории
     subcategoryPreviewProduct = models.ForeignKey(
-        Product, on_delete=models.PROTECT, null=True, blank=True, verbose_name='Товар для демонстрации категории'
+        Product, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Товар для демонстрации категории'
     )
     # Эта картинка будет относиться к демонстрации категории
     categoryPreviewImage = models.ImageField(

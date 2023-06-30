@@ -5,16 +5,6 @@ from pytz import utc
 from api.models import Brand, Category
 from api.utils import connectToPersonaDB
 
-
-def getBrandByName(name):
-    brand = None
-    try:
-        brand = Brand.objects.filter(name__icontains=name).first()
-    except:
-        brand = None
-    return brand
-
-
 PRODUCT_FIELDS = 'caption, price, Subdivision_ID, Message_ID, brand, size, color, \
     stock, new, ncKeywords, priceGroup, manufacturer, country, podklad, sostav, collection, LastUpdated, code, Checked'
 
@@ -34,7 +24,15 @@ def prepareFields(row: tuple, isSingle: bool = False, podklads: dict = {}, sosta
         discount = 0
 
     categoryId = Category.objects.get(categoryId=subcategoryId).parentId
-    brand = getBrandByName(brandName)
+
+    brand = Brand.objects.filter(name__icontains=brandName).first() if brandName else None
+    if brandName and not brand:
+        brand = Brand.objects.create(
+            name=brandName,
+            isTop=False,
+            keywords='',
+            description=brandName
+        )
 
     return {
         'uniqueId': uniqueId,

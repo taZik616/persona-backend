@@ -50,3 +50,13 @@ docker system prune
 docker rmi --force $(docker images -aq)
 docker system prune --all --force --volumes
 ```
+
+Лучший вариант
+
+```sh
+sudo -s
+systemctl stop docker
+rm -rf /var/lib/docker
+systemctl start docker
+exit
+```

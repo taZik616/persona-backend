@@ -1,4 +1,5 @@
 from os import path, remove
+from uuid import uuid4
 
 from django.core.files.storage import default_storage
 from django.db import models
@@ -8,10 +9,13 @@ from django.dispatch import receiver
 from api.constants import BRAND_GENDERS
 
 
+def randomId():
+    return str(uuid4())
+
 class Brand(models.Model):
     name = models.CharField(max_length=50, blank=False, null=False, verbose_name='Название бренда')
     brandId = models.CharField(
-        default='', max_length=20, blank=False, null=False, primary_key=True, verbose_name='Бренд')
+        default=randomId, max_length=40, blank=False, null=False, primary_key=True, verbose_name='Идентификатор бренда')
     logo = models.ImageField(
         upload_to='brands/', default=None, blank=True, null=True, verbose_name='Логотип')
     description = models.CharField(default='', max_length=5000, blank=True, verbose_name='Описание')

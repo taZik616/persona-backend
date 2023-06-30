@@ -56,13 +56,16 @@ class ProductListView(ListAPIView):
             items = items.filter(categoryId__in=categoryIdsByGender)
         if sizes:
             items = items.filter(
-                productvariant__size__in=splitString(sizes)).distinct()
+                productvariant__isAvailable=True,
+                productvariant__size__in=splitString(sizes)
+            ).distinct()
         # Фильтруем по значениям `productId`
         if productIds:
             items = items.filter(productId__in=splitString(productIds))
 
         availableSizes = ProductVariant.objects.filter(
-            product__in=items).values_list('size', flat=True).distinct()
+            product__in=items, isAvailable=True
+        ).values_list('size', flat=True).distinct()
         return {
             'page': self.paginate_queryset(items),
             'sizes': availableSizes,
