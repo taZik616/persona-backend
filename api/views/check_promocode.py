@@ -23,6 +23,9 @@ def checkPromocode(promocode: str, user: User):
 
         if user.usedPromocodes.filter(code=promocode.code).exists():
             return {'error': 'Вы уже использовали этот промокод'}
+        
+        if user.hasFirstBuyInApp and promocode.onlyFirstBuyInAppPromo:
+            return {'error': 'Промокод работает только на первую покупку в приложении'}
 
         return {
             'success': 'Промокод прошел проверку',

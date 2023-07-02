@@ -60,6 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=200, blank=True, verbose_name='e-mail')
     birthday = models.CharField(max_length=120, default='', blank=True, verbose_name='Дата рождения')
     isPhoneNumberVerified = models.BooleanField(default=False, blank=True, verbose_name='Подтвержденный телефон(да/нет)')
+    hasFirstBuyInApp = models.BooleanField(default=False, verbose_name='Была ли уже совершена покупка в приложении')
     usedPromocodes = models.ManyToManyField(Promocode, blank=True, verbose_name='Использованные промокоды')
 
     subEmail = models.BooleanField(default=False, blank=True, verbose_name='Подписка на e-mail')

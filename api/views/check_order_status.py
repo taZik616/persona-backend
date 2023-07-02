@@ -62,6 +62,7 @@ def checkOrderStatusAndUpdateStateTask(orderId, isFastOrder=False, giftCardUsed=
                             if order.usedPromocode:
                                 order.user.usedPromocodes.add(
                                     order.usedPromocode)
+                                order.user.hasFirstBuyInApp = True
                                 discountCard = DiscountCard.objects.filter(
                                     user=order.user).first()
                                 if discountCard:

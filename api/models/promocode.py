@@ -27,6 +27,8 @@ null - значит промокод действует на все товары
     endDate = models.DateField(null=True, blank=True, help_text='''
 Метка времени до которого промокод будет активен
 ''', verbose_name='Преимущества')
+    onlyFirstBuyInAppPromo = models.BooleanField(default=False, verbose_name='Работает только при первой покупки через приложение(да/нет)')
+    
 
     class Meta:
         verbose_name = 'Промокод'
