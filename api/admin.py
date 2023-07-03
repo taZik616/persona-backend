@@ -31,8 +31,6 @@ admin.site.register(User)
 admin.site.register(Brand)
 admin.site.register(AnotherImage)
 admin.site.register(MainContent)
-admin.site.register(MainSwiperImage)
-admin.site.register(OtherContent)
 admin.site.register(ProductImage)
 admin.site.register(FavoriteItem)
 admin.site.register(BasketItem)
@@ -43,6 +41,16 @@ admin.site.register(Promocode)
 admin.site.register(ServerSettings)
 admin.site.register(GiftCard)
 admin.site.register(GiftCardType)
+
+
+@admin.register(OtherContent)
+class OtherContentAdmin(admin.ModelAdmin):
+    list_display = ['type', 'title']
+
+
+@admin.register(MainSwiperImage)
+class MainSwiperImageAdmin(admin.ModelAdmin):
+    list_display = ['id', 'imageUrl', 'productFilters']
 
 
 @admin.register(FastOrder)

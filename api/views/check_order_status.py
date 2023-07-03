@@ -62,7 +62,6 @@ def checkOrderStatusAndUpdateStateTask(orderId, isFastOrder=False, giftCardUsed=
                             if order.usedPromocode:
                                 order.user.usedPromocodes.add(
                                     order.usedPromocode)
-                                order.user.hasFirstBuyInApp = True
                                 discountCard = DiscountCard.objects.filter(
                                     user=order.user).first()
                                 if discountCard:
@@ -70,6 +69,9 @@ def checkOrderStatusAndUpdateStateTask(orderId, isFastOrder=False, giftCardUsed=
                                     discountCard.purchaseTotal += OrderSerializer(
                                         order).data['totalSum']
                                     discountCard.save()
+                                order.user.save()
+                            if not order.user.hasFirstBuyInApp:
+                                order.user.hasFirstBuyInApp = True
                                 order.user.save()
                         order.status = 'AlreadyPaid'
                     case 3:

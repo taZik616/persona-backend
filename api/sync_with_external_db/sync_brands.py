@@ -34,7 +34,7 @@ def syncBrandsTask():
                 fileExtension = mimetypes.guess_extension(
                     response.headers.get("content-type"))
                 if not fileExtension:
-                    match = re.search(r'image/([a-zA-Z]+)', string)
+                    match = re.search(r'image/([a-zA-Z]+)', filePath)
                     if match:
                         fileExtension = match.group(1)
                     else:

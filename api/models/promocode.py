@@ -11,7 +11,7 @@ class Promocode(models.Model):
     # Порог при котором скидка начинает действовать<br>
     "startSumForDiscountSum": 50000<br>
 }
-''')
+''', verbose_name='Профит от промокода')
     productFilters = models.JSONField(help_text='''
 # Здесь указываются фильтры, которые определят какие товары будут участвовать в промокоде.<br>
 {<br>
@@ -23,10 +23,11 @@ class Promocode(models.Model):
     "priceGroup": "Распродажа 30%" # На товары какой-либо группы цен.<br>
 }<br>
 null - значит промокод действует на все товары
-''', null=True, blank=True)
+''', null=True, blank=True, verbose_name='Фильтры для ограничения действия промокода')
     endDate = models.DateField(null=True, blank=True, help_text='''
-Метка времени до которого промокод будет активен
-''', verbose_name='Преимущества')
+Метка времени до которого промокод будет активен<br>
+Если не указать, то промокод будет бессрочным
+''', verbose_name='Работает до(какого времени)')
     onlyFirstBuyInAppPromo = models.BooleanField(default=False, verbose_name='Работает только при первой покупки через приложение(да/нет)')
     
 
