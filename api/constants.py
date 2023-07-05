@@ -24,3 +24,12 @@ MAIN_CONTENTS = (
     ('FashionSwiper', 'Свайпер образов'),
     ('FashionList', 'Список образов'),
 )
+
+HELPFUL_INFO_KEYS = (
+    ('exchange_and_return', 'Обмен и возврат'),
+    ('terms_of_sale', 'Условия продажи'),
+    ('privacy_policy', 'Политика конфиденциальности'),
+    ('payment_policy', 'Оплата'),
+    ('contacts', 'Контакты'),
+    ('delivery', 'Доставка'),
+)

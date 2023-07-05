@@ -1,3 +1,4 @@
+from api.utils import getWomenAndMenCats
 from rest_framework import serializers
 
 from ..models import (Brand, Category, MainContent, MainSwiperImage, Product,
@@ -61,6 +62,14 @@ class MainContentSerializer(serializers.ModelSerializer):
                                 brandId=item['brandId']).first()
                             productsByBrand = Product.objects.filter(
                                 brand=brand).order_by('?')
+                            filters = item.get('queryFilters', {})
+                            if filters.get('gender'):
+                                gender = filters['gender']
+                                [menCats, womenCats] = getWomenAndMenCats()
+                                if gender == 'men':
+                                    productsByBrand = productsByBrand.filter(categoryId__in=menCats)
+                                elif gender == 'women':
+                                    productsByBrand = productsByBrand.filter(categoryId__in=womenCats)
                             for product in productsByBrand:
                                 prodImage = ProductImage.objects.filter(
                                     imageId=product.productId).first()

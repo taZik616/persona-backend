@@ -15,6 +15,7 @@ from api.models import (
     FavoriteItem,
     GiftCard,
     GiftCardType,
+    HelpfulInfo,
     MainContent,
     MainSwiperImage,
     Order,
@@ -41,6 +42,7 @@ admin.site.register(Promocode)
 admin.site.register(ServerSettings)
 admin.site.register(GiftCard)
 admin.site.register(GiftCardType)
+admin.site.register(HelpfulInfo)
 
 
 @admin.register(OtherContent)

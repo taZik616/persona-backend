@@ -34,7 +34,7 @@ class PersonalInfoView(APIView):
                     fullName = f"{user.firstName} {user.lastName}"
 
                     cursor.execute(f"""
-                    UPDATE `User` SET `FullName` = '{fullName}', `Email` = '{user.email if user.email else 'NULL'}', `Birthday` = '{user.birthday if user.birthday else 'NULL'}' WHERE `User_ID` = {user.userId};
+                    UPDATE `User` SET `FullName` = '{fullName}', `Email` = {f"'{user.email}'" if user.email else 'NULL'}, `Birthday` = {f"'{user.birthday}'" if user.birthday else 'NULL'} WHERE `User_ID` = {user.userId};
                     """)
 
                     user.save()

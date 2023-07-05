@@ -47,7 +47,7 @@ urlpatterns = [
     path('recovery-password-check', views.RecoveryPasswordCheckView),
     path('recovery-password-complete', views.RecoveryPasswordCompleteView),
     path('sync/', include(sync_urls)),
-    path('info/<str:infoName>', views.HelpfulInfoView.as_view()),
+    path('info/<str:infoName>', views.getHelpfulInfo),
     path('subcategories-bind-random-product',
          views.subcategoriesBindRandomProduct),
     path('brands-gender-separate', views.brandsGenderSeparate),
